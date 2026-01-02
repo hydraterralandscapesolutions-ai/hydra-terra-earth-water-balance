@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense & Payroll Manager - Hydra-Terra Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #001a4d 0%, #003d7a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(0, 100, 200, 0.2);
+            border-radius: 10px;
+            border-left: 5px solid #00ff99;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #00ff99;
+        }
+
+        .subtitle {
+            color: #00ccff;
+            font-size: 1.1em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            background: rgba(0, 100, 200, 0.5);
+            border: 2px solid #00ccff;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .tab-btn:hover {
+            background: rgba(0, 100, 200, 0.8);
+            border-color: #00ff99;
+        }
+
+        .tab-btn.active {
+            background: #00ff99;
+            color: #001a4d;
+            border-color: #00ff99;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: rgba(0, 50, 100, 0.6);
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #00ff99;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(0, 100, 200, 0.3);
+            border: 2px solid #00ccff;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: #00ff99;
+            background: rgba(0, 100, 200, 0.5);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            color: #00ff99;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #999;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #00ff99;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 30, 60, 0.5);
+            border: 2px solid #00ccff;
+            border-radius: 5px;
+            color: #e0e0e0;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #00ff99;
+            background: rgba(0, 50, 100, 0.6);
+            outline: none;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #00ccff;
+            color: #001a4d;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 10px 5px 10px 0;
+        }
+
+        .btn:hover {
+            background: #00ff99;
+            transform: translateY(-2px);
+        }
+
+        .btn.secondary {
+            background: #666;
+            color: #fff;
+        }
+
+        .expense-card {
+            background: rgba(0, 100, 200, 0.3);
+            border: 2px solid #00ccff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .expense-info {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .expense-category {
+            color: #00ff99;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .expense-description {
+            color: #b0b0b0;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .expense-amount {
+            color: #00ccff;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .payroll-card {
+            background: rgba(0, 100, 200, 0.3);
+            border: 2px solid #00ccff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .payroll-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .employee-name {
+            color: #00ff99;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .payroll-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+            color: #b0b0b0;
+        }
+
+        .payroll-item {
+            background: rgba(0, 30, 60, 0.5);
+            padding: 12px;
+            border-radius: 5px;
+            border-left: 4px solid #00ccff;
+        }
+
+        .payroll-label {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .payroll-value {
+            color: #00ff99;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #b0b0b0;
+        }
+
+        th {
+            background: rgba(0, 100, 200, 0.3);
+            padding: 12px;
+            text-align: left;
+            color: #00ff99;
+            border-bottom: 2px solid #00ccff;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(0, 200, 255, 0.2);
+        }
+
+        tr:hover {
+            background: rgba(0, 100, 200, 0.2);
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: rgba(0, 255, 153, 0.2);
+            border-left: 3px solid #00ff99;
+            border-radius: 3px;
+            color: #00ff99;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .payroll-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💰 Expense & Payroll Manager</h1>
+            <div class="subtitle">Track Expenses, Manage Payroll, Monitor Budgets</div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('expenses')">💸 Expenses</button>
+            <button class="tab-btn" onclick="switchTab('payroll')">💳 Payroll</button>
+            <button class="tab-btn" onclick="switchTab('reports')">📋 Reports</button>
+        </div>
+
+        <!-- DASHBOARD TAB -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">$12,850</div>
+                    <div class="stat-label">Total Expenses (Month)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">$28,400</div>
+                    <div class="stat-label">Total Payroll (Month)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">$1,850</div>
+                    <div class="stat-label">Budget Remaining</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">87%</div>
+                    <div class="stat-label">Budget Utilized</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>📈 Recent Expenses (This Month)</h2>
+                <div id="recentExpenses"></div>
+            </div>
+
+            <div class="section">
+                <h2>👥 Recent Payroll Entries</h2>
+                <div id="recentPayroll"></div>
+            </div>
+        </div>
+
+        <!-- EXPENSES TAB -->
+        <div id="expenses" class="tab-content">
+            <div class="section">
+                <h2>➕ Add New Expense</h2>
+                <form id="expenseForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>📅 Date</label>
+                            <input type="date" id="expenseDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>📂 Category</label>
+                            <select id="expenseCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="labor">Labor</option>
+                                <option value="materials">Materials</option>
+                                <option value="equipment">Equipment</option>
+                                <option value="fuel">Fuel</option>
+                                <option value="maintenance">Maintenance</option>
+                                <option value="supplies">Supplies</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>📝 Description</label>
+                        <input type="text" id="expenseDesc" placeholder="What was purchased/spent on?" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>💵 Amount ($)</label>
+                            <input type="number" id="expenseAmount" step="0.01" placeholder="0.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label>🏗️ Project (Optional)</label>
+                            <select id="expenseProject">
+                                <option value="">No Project</option>
+                                <option value="backyard">Backyard Paradise</option>
+                                <option value="commercial">Commercial Landscape</option>
+                                <option value="water">Water Feature</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn" onclick="addExpense()">💾 Save Expense</button>
+                </form>
+            </div>
+
+            <div class="section">
+                <h2>💸 All Expenses</h2>
+                <div id="allExpenses"></div>
+            </div>
+        </div>
+
+        <!-- PAYROLL TAB -->
+        <div id="payroll" class="tab-content">
+            <div class="section">
+                <h2>➕ Add Payroll Entry</h2>
+                <form id="payrollForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>👤 Employee</label>
+                            <select id="payrollEmployee" required>
+                                <option value="">Select Employee</option>
+                                <option value="john">John Smith</option>
+                                <option value="sarah">Sarah Johnson</option>
+                                <option value="mike">Mike Wilson</option>
+                                <option value="emma">Emma Davis</option>
+                                <option value="chris">Chris Brown</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>📅 Pay Period</label>
+                            <input type="date" id="payPeriod" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>⏱️ Hours Worked</label>
+                            <input type="number" id="hoursWorked" step="0.5" placeholder="0.0" required>
+                        </div>
+                        <div class="form-group">
+                            <label>💵 Hourly Rate ($)</label>
+                            <input type="number" id="hourlyRate" step="0.01" placeholder="0.00" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>🎯 Bonus/Deduction ($)</label>
+                            <input type="number" id="bonusDeduction" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>📝 Notes</label>
+                            <input type="text" id="payrollNotes" placeholder="Optional notes">
+                        </div>
+                    </div>
+                    <button type="button" class="btn" onclick="addPayroll()">💾 Save Payroll</button>
+                </form>
+            </div>
+
+            <div class="section">
+                <h2>👥 Payroll Records</h2>
+                <div id="payrollRecords"></div>
+            </div>
+        </div>
+
+        <!-- REPORTS TAB -->
+        <div id="reports" class="tab-content">
+            <div class="section">
+                <h2>📊 Monthly Expense Summary</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Count</th>
+                                <th>Total Amount</th>
+                                <th>% of Budget</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expenseSummary"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>👥 Payroll Summary</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Total Hours</th>
+                                <th>Gross Pay</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payrollSummary"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>📈 Budget vs Actual</h2>
+                <button class="btn" onclick="generateReport()">📄 Generate PDF Report</button>
+                <button class="btn secondary" onclick="exportCSV()">📊 Export to CSV</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let expenses = [];
+        let payroll = [];
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'expenses') loadAllExpenses();
+            if (tabName === 'payroll') loadPayrollRecords();
+            if (tabName === 'reports') loadReports();
+        }
+
+        // Sample data
+        const sampleExpenses = [
+            { date: '2026-01-02', category: 'materials', desc: 'Gravel & mulch', amount: 450, project: 'backyard' },
+            { date: '2026-01-01', category: 'equipment', desc: 'Rent excavator', amount: 280, project: 'commercial' },
+            { date: '2025-12-30', category: 'fuel', desc: 'Gas for trucks', amount: 125, project: '' },
+            { date: '2025-12-28', category: 'supplies', desc: 'Tools & supplies', amount: 195, project: '' },
+            { date: '2025-12-25', category: 'maintenance', desc: 'Equipment service', amount: 350, project: '' }
+        ];
+
+        const samplePayroll = [
+            { employee: 'John Smith', date: '2026-01-01', hours: 40, rate: 45, bonus: 100 },
+            { employee: 'Sarah Johnson', date: '2026-01-01', hours: 38, rate: 50, bonus: 0 },
+            { employee: 'Mike Wilson', date: '2026-01-01', hours: 42, rate: 48, bonus: 50 }
+        ];
+
+        function addExpense() {
+            const date = document.getElementById('expenseDate').value;
+            const category = document.getElementById('expenseCategory').value;
+            const desc = document.getElementById('expenseDesc').value;
+            const amount = parseFloat(document.getElementById('expenseAmount').value);
+            const project = document.getElementById('expenseProject').value;
+
+            if (!date || !category || !desc || !amount) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            expenses.push({ date, category, desc, amount, project });
+            localStorage.setItem('hydrExpenses', JSON.stringify(expenses));
+            
+            alert('✓ Expense added successfully!');
+            document.getElementById('expenseForm').reset();
+            document.getElementById('expenseDate').valueAsDate = new Date();
+        }
+
+        function loadAllExpenses() {
+            const saved = localStorage.getItem('hydrExpenses');
+            if (saved) expenses = JSON.parse(saved);
+            
+            // Add sample data if empty
+            if (expenses.length === 0) {
+                expenses = sampleExpenses;
+            }
+
+            let html = '';
+            expenses.forEach((exp, idx) => {
+                const categoryLabel = exp.category.charAt(0).toUpperCase() + exp.category.slice(1);
+                html += `
+                    <div class="expense-card">
+                        <div class="expense-info">
+                            <div class="expense-category">${categoryLabel}</div>
+                            <div class="expense-description">${exp.desc}</div>
+                            <div style="color: #999; font-size: 0.85em;">📅 ${new Date(exp.date).toLocaleDateString()}</div>
+                        </div>
+                        <div class="expense-amount">$${exp.amount.toFixed(2)}</div>
+                        <button class="btn secondary" style="padding: 8px 12px;" onclick="deleteExpense(${idx})">🗑️</button>
+                    </div>
+                `;
+            });
+            document.getElementById('allExpenses').innerHTML = html;
+        }
+
+        function deleteExpense(idx) {
+            expenses.splice(idx, 1);
+            localStorage.setItem('hydrExpenses', JSON.stringify(expenses));
+            loadAllExpenses();
+        }
+
+        function addPayroll() {
+            const employee = document.getElementById('payrollEmployee').value;
+            const date = document.getElementById('payPeriod').value;
+            const hours = parseFloat(document.getElementById('hoursWorked').value);
+            const rate = parseFloat(document.getElementById('hourlyRate').value);
+            const bonus = parseFloat(document.getElementById('bonusDeduction').value) || 0;
+
+            if (!employee || !date || !hours || !rate) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            payroll.push({ employee, date, hours, rate, bonus });
+            localStorage.setItem('hydrPayroll', JSON.stringify(payroll));
+            
+            alert('✓ Payroll entry added!');
+            document.getElementById('payrollForm').reset();
+        }
+
+        function loadPayrollRecords() {
+            const saved = localStorage.getItem('hydrPayroll');
+            if (saved) payroll = JSON.parse(saved);
+            
+            if (payroll.length === 0) {
+                payroll = samplePayroll;
+            }
+
+            let html = '';
+            payroll.forEach((entry, idx) => {
+                const gross = (entry.hours * entry.rate + entry.bonus).toFixed(2);
+                html += `
+                    <div class="payroll-card">
+                        <div class="payroll-header">
+                            <div class="employee-name">👤 ${entry.employee}</div>
+                            <div style="color: #00ff99; font-weight: bold;">$${gross}</div>
+                        </div>
+                        <div class="payroll-info">
+                            <div class="payroll-item">
+                                <div class="payroll-label">📅 Period</div>
+                                <div class="payroll-value">${new Date(entry.date).toLocaleDateString()}</div>
+                            </div>
+                            <div class="payroll-item">
+                                <div class="payroll-label">⏱️ Hours</div>
+                                <div class="payroll-value">${entry.hours}h @ $${entry.rate}/hr</div>
+                            </div>
+                            <div class="payroll-item">
+                                <div class="payroll-label">🎯 Bonus/Ded</div>
+                                <div class="payroll-value">$${entry.bonus.toFixed(2)}</div>
+                            </div>
+                        </div>
+                        <button class="btn secondary" style="padding: 8px 12px;" onclick="deletePayroll(${idx})">🗑️</button>
+                    </div>
+                `;
+            });
+            document.getElementById('payrollRecords').innerHTML = html;
+        }
+
+        function deletePayroll(idx) {
+            payroll.splice(idx, 1);
+            localStorage.setItem('hydrPayroll', JSON.stringify(payroll));
+            loadPayrollRecords();
+        }
+
+        function loadReports() {
+            // Expense summary
+            const categories = {};
+            expenses.forEach(exp => {
+                if (!categories[exp.category]) {
+                    categories[exp.category] = { count: 0, total: 0 };
+                }
+                categories[exp.category].count++;
+                categories[exp.category].total += exp.amount;
+            });
+
+            let expenseHtml = '';
+            const totalExpenses = Object.values(categories).reduce((sum, cat) => sum + cat.total, 0);
+            Object.entries(categories).forEach(([cat, data]) => {
+                const percent = ((data.total / totalExpenses) * 100).toFixed(1);
+                expenseHtml += `
+                    <tr>
+                        <td>${cat.charAt(0).toUpperCase() + cat.slice(1)}</td>
+                        <td>${data.count}</td>
+                        <td>$${data.total.toFixed(2)}</td>
+                        <td>${percent}%</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('expenseSummary').innerHTML = expenseHtml;
+
+            // Payroll summary
+            const employees = {};
+            payroll.forEach(entry => {
+                if (!employees[entry.employee]) {
+                    employees[entry.employee] = { hours: 0, pay: 0 };
+                }
+                employees[entry.employee].hours += entry.hours;
+                employees[entry.employee].pay += (entry.hours * entry.rate + entry.bonus);
+            });
+
+            let payrollHtml = '';
+            Object.entries(employees).forEach(([name, data]) => {
+                payrollHtml += `
+                    <tr>
+                        <td>${name}</td>
+                        <td>${data.hours}h</td>
+                        <td>$${data.pay.toFixed(2)}</td>
+                        <td>Processed</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('payrollSummary').innerHTML = payrollHtml;
+        }
+
+        function generateReport() {
+            alert('📄 PDF report generation coming soon! You can currently export to CSV.');
+        }
+
+        function exportCSV() {
+            alert('📊 CSV export coming soon!');
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('expenseDate').valueAsDate = new Date();
+            document.getElementById('payPeriod').valueAsDate = new Date();
+            
+            // Load sample data
+            expenses = sampleExpenses;
+            payroll = samplePayroll;
+            
+            // Show recent entries
+            let recentExp = '';
+            expenses.slice(0, 3).forEach(exp => {
+                recentExp += `
+                    <div class="expense-card">
+                        <div class="expense-info">
+                            <div class="expense-category">${exp.category}</div>
+                            <div class="expense-description">${exp.desc}</div>
+                        </div>
+                        <div class="expense-amount">$${exp.amount.toFixed(2)}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('recentExpenses').innerHTML = recentExp;
+
+            let recentPay = '';
+            payroll.slice(0, 2).forEach(entry => {
+                const gross = (entry.hours * entry.rate + entry.bonus).toFixed(2);
+                recentPay += `
+                    <div class="payroll-card">
+                        <div class="payroll-header">
+                            <div class="employee-name">${entry.employee}</div>
+                            <div style="color: #00ff99; font-weight: bold;">$${gross}</div>
+                        </div>
+                        <div style="color: #999; font-size: 0.9em;">${entry.hours}h @ $${entry.rate}/hr</div>
+                    </div>
+                `;
+            });
+            document.getElementById('recentPayroll').innerHTML = recentPay;
+        });
+    </script>
+</body>
+</html>

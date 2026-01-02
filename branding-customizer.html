@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Branding Customizer - Hydra-Terra Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #001a4d 0%, #003d7a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(0, 100, 200, 0.2);
+            border-radius: 10px;
+            border-left: 5px solid #00ff99;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #00ff99;
+            text-shadow: 0 0 10px rgba(0, 255, 153, 0.5);
+        }
+
+        .subtitle {
+            color: #00ccff;
+            font-size: 1.1em;
+        }
+
+        .section {
+            background: rgba(0, 50, 100, 0.6);
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #00ff99;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #00ccff;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #00ccff;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="color"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 30, 60, 0.8);
+            border: 2px solid #00ccff;
+            color: #fff;
+            border-radius: 5px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="color"]:focus,
+        textarea:focus,
+        select:focus {
+            background: rgba(0, 50, 100, 0.8);
+            border-color: #00ff99;
+            box-shadow: 0 0 10px rgba(0, 255, 153, 0.3);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #666;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #00ff99;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .color-preview {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .color-swatch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .color-box {
+            width: 80px;
+            height: 80px;
+            border-radius: 5px;
+            border: 2px solid #00ccff;
+        }
+
+        .color-label {
+            font-size: 0.85em;
+            color: #b0b0b0;
+        }
+
+        .logo-preview {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0, 30, 60, 0.5);
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .logo-preview img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 5px;
+        }
+
+        .logo-preview p {
+            color: #b0b0b0;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #00ccff;
+            color: #001a4d;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 10px 5px 10px 0;
+        }
+
+        .btn:hover {
+            background: #00ff99;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 153, 0.3);
+        }
+
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .info-box {
+            background: rgba(0, 100, 200, 0.2);
+            border-left: 4px solid #00ccff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .info-box h4 {
+            color: #00ff99;
+            margin-bottom: 8px;
+        }
+
+        .info-box p {
+            color: #b0b0b0;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .preview-section {
+            background: rgba(0, 30, 60, 0.7);
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .preview-section h3 {
+            color: #00ff99;
+            margin-bottom: 15px;
+        }
+
+        .email-preview {
+            background: white;
+            color: #333;
+            padding: 20px;
+            border-radius: 5px;
+            line-height: 1.6;
+        }
+
+        .email-header {
+            border-bottom: 3px solid;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .email-body {
+            margin: 15px 0;
+        }
+
+        .email-signature {
+            border-top: 1px solid #ccc;
+            margin-top: 20px;
+            padding-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .success-message {
+            background: rgba(0, 255, 153, 0.2);
+            border: 2px solid #00ff99;
+            color: #00ff99;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Branding Customizer</h1>
+            <div class="subtitle">Customize All Tools & Documents with Your Brand</div>
+        </header>
+
+        <div class="section">
+            <h2>⚙️ Branding Settings</h2>
+
+            <div class="toggle-switch">
+                <label style="margin: 0;">Enable Custom Branding:</label>
+                <label class="switch">
+                    <input type="checkbox" id="brandingToggle" checked>
+                    <span class="slider"></span>
+                </label>
+                <span id="toggleStatus" style="color: #00ff99; font-weight: bold;">ON</span>
+            </div>
+
+            <div class="info-box">
+                <h4>💡 How This Works</h4>
+                <p>
+                    <strong>When ON:</strong> All tools use YOUR branding (logo, colors, contact info)<br>
+                    <strong>When OFF:</strong> Tools run without any branding (clean slate for others to customize)<br>
+                    <strong>Your Settings:</strong> Saved in browser and applied to all apps
+                </p>
+            </div>
+        </div>
+
+        <div class="section" id="brandingSection">
+            <h2>🏢 Company Information</h2>
+
+            <div class="form-group">
+                <label>Company Name</label>
+                <input type="text" id="companyName" placeholder="e.g., Hydra-Terra Landscape Solutions" value="Hydra-Terra Landscape Solutions">
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="phoneNumber" placeholder="e.g., 0426 398 510" value="0426 398 510">
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="emailAddress" placeholder="e.g., admin@hydra-terra.com.au" value="admin@hydra-terra.com.au">
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" id="address" placeholder="e.g., 62/2 Stockdale Rd, O'Connor WA 6163" value="62/2 Stockdale Rd, O'Connor WA 6163">
+                </div>
+
+                <div class="form-group">
+                    <label>Website</label>
+                    <input type="text" id="website" placeholder="e.g., www.hydra-terra.com.au" value="www.hydra-terra.com.au">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Business Registration (ABN/Tax ID)</label>
+                <input type="text" id="businessId" placeholder="e.g., 19 630 905 514" value="19 630 905 514">
+            </div>
+
+            <h2 style="color: #00ff99; margin-top: 30px; margin-bottom: 20px;">🎨 Brand Colors</h2>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Primary Color (Main Brand Color)</label>
+                    <input type="color" id="primaryColor" value="#0064C8">
+                    <div class="color-preview">
+                        <div class="color-swatch">
+                            <div class="color-box" id="primaryPreview" style="background-color: #0064C8;"></div>
+                            <span class="color-label">#0064C8</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Secondary Color (Accent)</label>
+                    <input type="color" id="secondaryColor" value="#2D5016">
+                    <div class="color-preview">
+                        <div class="color-swatch">
+                            <div class="color-box" id="secondaryPreview" style="background-color: #2D5016;"></div>
+                            <span class="color-label">#2D5016</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Accent Color (Highlights)</label>
+                    <input type="color" id="accentColor" value="#00CCFF">
+                    <div class="color-preview">
+                        <div class="color-swatch">
+                            <div class="color-box" id="accentPreview" style="background-color: #00CCFF;"></div>
+                            <span class="color-label">#00CCFF</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Text Color</label>
+                    <input type="color" id="textColor" value="#FFFFFF">
+                    <div class="color-preview">
+                        <div class="color-swatch">
+                            <div class="color-box" id="textPreview" style="background-color: #FFFFFF;"></div>
+                            <span class="color-label">#FFFFFF</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 style="color: #00ff99; margin-top: 30px; margin-bottom: 20px;">📸 Logo & Images</h2>
+
+            <div class="form-group">
+                <label>Logo URL (or paste logo file path)</label>
+                <input type="text" id="logoUrl" placeholder="e.g., Branding/Logos/logo.png" value="Branding/Logos/logo.png">
+                <div class="logo-preview">
+                    <p>Logo Preview:</p>
+                    <img id="logoPreview" src="Branding/Logos/logo.png" alt="Logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23333%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22white%22%3ENo Logo%3C/text%3E%3C/svg%3E'">
+                </div>
+            </div>
+
+            <h2 style="color: #00ff99; margin-top: 30px; margin-bottom: 20px;">✍️ Email Signature</h2>
+
+            <div class="form-group">
+                <label>Your Full Name</label>
+                <input type="text" id="signatureName" placeholder="Your Name" value="Greg">
+            </div>
+
+            <div class="form-group">
+                <label>Your Job Title</label>
+                <input type="text" id="signatureTitle" placeholder="e.g., Business Owner, Director" value="Director">
+            </div>
+
+            <div class="form-group">
+                <label>Social Media Profiles (Optional - one per line)</label>
+                <textarea id="socialProfiles" placeholder="Facebook: facebook.com/hydraterra&#10;Instagram: instagram.com/hydraterra.com.au&#10;TikTok: tiktok.com/@hydraterra">Facebook: facebook.com/hydraterra
+Instagram: instagram.com/hydraterra.com.au
+TikTok: tiktok.com/@hydraterra</textarea>
+            </div>
+
+            <h2 style="color: #00ff99; margin-top: 30px; margin-bottom: 20px;">🎯 Brand Slogan & Tagline</h2>
+
+            <div class="form-group">
+                <label>Main Slogan</label>
+                <input type="text" id="mainSlogan" placeholder="e.g., Earth • Water • Balance" value="Earth • Water • Balance">
+            </div>
+
+            <div class="form-group">
+                <label>Sub-Slogan (Optional)</label>
+                <input type="text" id="subSlogan" placeholder="e.g., Harmony in Every Solution" value="Harmony in Every Solution">
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button class="btn" onclick="saveSettings()">💾 Save Branding Settings</button>
+                <button class="btn" style="background: #ff6b6b;" onclick="resetSettings()">🔄 Reset to Defaults</button>
+            </div>
+
+            <div id="successMessage" class="success-message">
+                ✓ Branding settings saved successfully! All tools will now use your brand.
+            </div>
+        </div>
+
+        <div class="preview-section">
+            <h3>📧 Email Signature Preview</h3>
+            <div class="email-preview">
+                <div class="email-body">
+                    <p>Hi,</p>
+                    <p>Your message here...</p>
+                    <br>
+                </div>
+                <div class="email-signature">
+                    <strong id="previewSignatureName">Greg</strong><br>
+                    <span id="previewSignatureTitle">Director</span><br>
+                    <span id="previewCompanyName">Hydra-Terra Landscape Solutions</span><br>
+                    <span id="previewPhone">0426 398 510</span><br>
+                    <span id="previewEmail">admin@hydra-terra.com.au</span><br>
+                    <span id="previewWebsite">www.hydra-terra.com.au</span><br>
+                    <br>
+                    <span style="color: #999; font-size: 0.85em;">🌍 Earth • Water • Balance 💧</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" style="margin-top: 30px;">
+            <h2>📋 How to Use Your Branding</h2>
+            <div class="info-box">
+                <h4>✅ Applied To:</h4>
+                <p>
+                    • Project Tracker (when created)<br>
+                    • Appointment Scheduler (when created)<br>
+                    • Invoice & Quote Generator (when created)<br>
+                    • Task Manager (when created)<br>
+                    • Expense Tracker (when created)<br>
+                    • All email signatures<br>
+                    • All PDF documents<br>
+                    • All web pages<br>
+                    • All exported reports
+                </p>
+            </div>
+
+            <div class="info-box">
+                <h4>🔄 Share Without Your Branding:</h4>
+                <p>
+                    If you want to let someone else use your tools without your branding:<br>
+                    1. Turn OFF the "Enable Custom Branding" toggle above<br>
+                    2. Share the app link with them<br>
+                    3. They can customize it with their own branding<br>
+                    4. Your settings stay saved for when you use it again
+                </p>
+            </div>
+
+            <div class="info-box">
+                <h4>💾 Where Settings Are Stored:</h4>
+                <p>
+                    Settings are saved in your browser's local storage. They persist across sessions
+                    but are unique to your device. To move settings to another computer, you can
+                    export and import them (feature coming soon).
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle branding on/off
+        document.getElementById('brandingToggle').addEventListener('change', function() {
+            const section = document.getElementById('brandingSection');
+            const status = document.getElementById('toggleStatus');
+            
+            if (this.checked) {
+                section.style.display = 'block';
+                status.textContent = 'ON';
+                status.style.color = '#00ff99';
+                localStorage.setItem('brandingEnabled', 'true');
+            } else {
+                section.style.display = 'none';
+                status.textContent = 'OFF';
+                status.style.color = '#ff6b6b';
+                localStorage.setItem('brandingEnabled', 'false');
+            }
+        });
+
+        // Color preview update
+        document.getElementById('primaryColor').addEventListener('change', function() {
+            document.getElementById('primaryPreview').style.backgroundColor = this.value;
+        });
+
+        document.getElementById('secondaryColor').addEventListener('change', function() {
+            document.getElementById('secondaryPreview').style.backgroundColor = this.value;
+        });
+
+        document.getElementById('accentColor').addEventListener('change', function() {
+            document.getElementById('accentPreview').style.backgroundColor = this.value;
+        });
+
+        document.getElementById('textColor').addEventListener('change', function() {
+            document.getElementById('textPreview').style.backgroundColor = this.value;
+        });
+
+        // Logo preview
+        document.getElementById('logoUrl').addEventListener('change', function() {
+            const preview = document.getElementById('logoPreview');
+            if (this.value) {
+                preview.src = this.value;
+                preview.onerror = function() {
+                    this.src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23333%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22white%22%3EError%3C/text%3E%3C/svg%3E';
+                };
+            }
+        });
+
+        // Email signature preview update
+        document.getElementById('signatureName').addEventListener('input', function() {
+            document.getElementById('previewSignatureName').textContent = this.value;
+        });
+
+        document.getElementById('signatureTitle').addEventListener('input', function() {
+            document.getElementById('previewSignatureTitle').textContent = this.value;
+        });
+
+        document.getElementById('companyName').addEventListener('input', function() {
+            document.getElementById('previewCompanyName').textContent = this.value;
+        });
+
+        document.getElementById('phoneNumber').addEventListener('input', function() {
+            document.getElementById('previewPhone').textContent = this.value;
+        });
+
+        document.getElementById('emailAddress').addEventListener('input', function() {
+            document.getElementById('previewEmail').textContent = this.value;
+        });
+
+        document.getElementById('website').addEventListener('input', function() {
+            document.getElementById('previewWebsite').textContent = this.value;
+        });
+
+        // Save settings
+        function saveSettings() {
+            const settings = {
+                companyName: document.getElementById('companyName').value,
+                phoneNumber: document.getElementById('phoneNumber').value,
+                emailAddress: document.getElementById('emailAddress').value,
+                address: document.getElementById('address').value,
+                website: document.getElementById('website').value,
+                businessId: document.getElementById('businessId').value,
+                primaryColor: document.getElementById('primaryColor').value,
+                secondaryColor: document.getElementById('secondaryColor').value,
+                accentColor: document.getElementById('accentColor').value,
+                textColor: document.getElementById('textColor').value,
+                logoUrl: document.getElementById('logoUrl').value,
+                signatureName: document.getElementById('signatureName').value,
+                signatureTitle: document.getElementById('signatureTitle').value,
+                socialProfiles: document.getElementById('socialProfiles').value,
+                mainSlogan: document.getElementById('mainSlogan').value,
+                subSlogan: document.getElementById('subSlogan').value,
+                brandingEnabled: document.getElementById('brandingToggle').checked
+            };
+
+            localStorage.setItem('hydraTerraBranding', JSON.stringify(settings));
+
+            // Show success message
+            const successMsg = document.getElementById('successMessage');
+            successMsg.classList.add('show');
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 5000);
+
+            console.log('✅ Branding settings saved:', settings);
+        }
+
+        // Reset settings
+        function resetSettings() {
+            if (confirm('Reset all branding to defaults?')) {
+                localStorage.removeItem('hydraTerraBranding');
+                location.reload();
+            }
+        }
+
+        // Load saved settings on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const saved = localStorage.getItem('hydraTerraBranding');
+            if (saved) {
+                const settings = JSON.parse(saved);
+                
+                document.getElementById('companyName').value = settings.companyName || '';
+                document.getElementById('phoneNumber').value = settings.phoneNumber || '';
+                document.getElementById('emailAddress').value = settings.emailAddress || '';
+                document.getElementById('address').value = settings.address || '';
+                document.getElementById('website').value = settings.website || '';
+                document.getElementById('businessId').value = settings.businessId || '';
+                document.getElementById('primaryColor').value = settings.primaryColor || '#0064C8';
+                document.getElementById('secondaryColor').value = settings.secondaryColor || '#2D5016';
+                document.getElementById('accentColor').value = settings.accentColor || '#00CCFF';
+                document.getElementById('textColor').value = settings.textColor || '#FFFFFF';
+                document.getElementById('logoUrl').value = settings.logoUrl || '';
+                document.getElementById('signatureName').value = settings.signatureName || '';
+                document.getElementById('signatureTitle').value = settings.signatureTitle || '';
+                document.getElementById('socialProfiles').value = settings.socialProfiles || '';
+                document.getElementById('mainSlogan').value = settings.mainSlogan || '';
+                document.getElementById('subSlogan').value = settings.subSlogan || '';
+                document.getElementById('brandingToggle').checked = settings.brandingEnabled !== false;
+
+                // Update previews
+                document.getElementById('primaryPreview').style.backgroundColor = settings.primaryColor || '#0064C8';
+                document.getElementById('secondaryPreview').style.backgroundColor = settings.secondaryColor || '#2D5016';
+                document.getElementById('accentPreview').style.backgroundColor = settings.accentColor || '#00CCFF';
+                document.getElementById('textPreview').style.backgroundColor = settings.textColor || '#FFFFFF';
+                document.getElementById('logoPreview').src = settings.logoUrl || 'Branding/Logos/logo.png';
+                document.getElementById('previewSignatureName').textContent = settings.signatureName || '';
+                document.getElementById('previewSignatureTitle').textContent = settings.signatureTitle || '';
+                document.getElementById('previewCompanyName').textContent = settings.companyName || '';
+                document.getElementById('previewPhone').textContent = settings.phoneNumber || '';
+                document.getElementById('previewEmail').textContent = settings.emailAddress || '';
+                document.getElementById('previewWebsite').textContent = settings.website || '';
+
+                if (!settings.brandingEnabled) {
+                    document.getElementById('brandingSection').style.display = 'none';
+                    document.getElementById('toggleStatus').textContent = 'OFF';
+                    document.getElementById('toggleStatus').style.color = '#ff6b6b';
+                }
+            }
+        });
+
+        console.log('🎨 Branding Customizer - Loaded Successfully');
+    </script>
+</body>
+</html>

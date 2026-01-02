@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Portal - Hydra-Terra Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #001a4d 0%, #003d7a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(0, 100, 200, 0.2);
+            border-radius: 10px;
+            border-left: 5px solid #00ff99;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #00ff99;
+        }
+
+        .subtitle {
+            color: #00ccff;
+            font-size: 1.1em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            background: rgba(0, 100, 200, 0.5);
+            border: 2px solid #00ccff;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .tab-btn:hover {
+            background: rgba(0, 100, 200, 0.8);
+            border-color: #00ff99;
+        }
+
+        .tab-btn.active {
+            background: #00ff99;
+            color: #001a4d;
+            border-color: #00ff99;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: rgba(0, 50, 100, 0.6);
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #00ff99;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+        }
+
+        .crew-card {
+            background: rgba(0, 100, 200, 0.3);
+            border: 2px solid #00ccff;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .crew-card:hover {
+            background: rgba(0, 100, 200, 0.5);
+            border-color: #00ff99;
+        }
+
+        .crew-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .crew-name {
+            color: #00ff99;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .crew-status {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+
+        .status-available {
+            background: #00ff99;
+            color: #001a4d;
+        }
+
+        .status-working {
+            background: #00ccff;
+            color: #001a4d;
+        }
+
+        .status-off {
+            background: #666;
+            color: #fff;
+        }
+
+        .crew-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+            color: #b0b0b0;
+        }
+
+        .info-item {
+            background: rgba(0, 30, 60, 0.5);
+            padding: 12px;
+            border-radius: 5px;
+            border-left: 4px solid #00ccff;
+        }
+
+        .info-label {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .info-value {
+            color: #00ff99;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .task-list {
+            background: rgba(0, 30, 60, 0.5);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0, 200, 255, 0.2);
+            color: #b0b0b0;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-name {
+            flex: 1;
+        }
+
+        .task-status {
+            color: #00ff99;
+            font-weight: bold;
+        }
+
+        .map-container {
+            background: rgba(0, 30, 60, 0.5);
+            border: 2px solid #00ccff;
+            border-radius: 8px;
+            padding: 20px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            font-size: 2em;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #00ccff;
+            color: #001a4d;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background: #00ff99;
+            transform: translateY(-2px);
+        }
+
+        .btn.secondary {
+            background: #666;
+            color: #fff;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(0, 100, 200, 0.3);
+            border: 2px solid #00ccff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            color: #00ff99;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #999;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .crew-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>👥 Team Portal</h1>
+            <div class="subtitle">Manage Your Crew, Track Progress, Optimize Routes</div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('crew')">👥 Crew Members</button>
+            <button class="tab-btn" onclick="switchTab('assignments')">📋 Task Assignments</button>
+            <button class="tab-btn" onclick="switchTab('tracking')">🗺️ Location Tracking</button>
+        </div>
+
+        <!-- DASHBOARD TAB -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCrew">5</div>
+                    <div class="stat-label">Team Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeToday">4</div>
+                    <div class="stat-label">Working Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="tasksCompleted">12</div>
+                    <div class="stat-label">Tasks Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="avgRating">4.8⭐</div>
+                    <div class="stat-label">Crew Rating</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>📋 Today's Assignments Overview</h2>
+                <div id="todayOverview"></div>
+            </div>
+
+            <div class="section">
+                <h2>🎯 High Performers (This Month)</h2>
+                <div id="topPerformers"></div>
+            </div>
+        </div>
+
+        <!-- CREW TAB -->
+        <div id="crew" class="tab-content">
+            <div class="section">
+                <h2>👥 Crew Members</h2>
+                <button class="btn" onclick="addNewCrew()">➕ Add Crew Member</button>
+                <div id="crewList"></div>
+            </div>
+        </div>
+
+        <!-- ASSIGNMENTS TAB -->
+        <div id="assignments" class="tab-content">
+            <div class="section">
+                <h2>📋 Task Assignments</h2>
+                <button class="btn" onclick="assignNewTask()">➕ Create New Assignment</button>
+                <div id="assignmentsList"></div>
+            </div>
+        </div>
+
+        <!-- TRACKING TAB -->
+        <div id="tracking" class="tab-content">
+            <div class="section">
+                <h2>🗺️ Real-Time Location Tracking</h2>
+                <div class="map-container">📍 Live GPS Tracking Map</div>
+                <div id="trackingList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const crew = [
+            {
+                id: 1,
+                name: 'John Smith',
+                role: 'Crew Lead',
+                status: 'Working',
+                email: 'john@hydra-terra.com',
+                phone: '0411 111 111',
+                location: '123 Green St, Sydney',
+                tasksToday: 3,
+                rating: 4.9,
+                completedTasks: 45
+            },
+            {
+                id: 2,
+                name: 'Sarah Johnson',
+                role: 'Landscape Designer',
+                status: 'Working',
+                email: 'sarah@hydra-terra.com',
+                phone: '0411 222 222',
+                location: 'Business Plaza, Melbourne',
+                tasksToday: 2,
+                rating: 4.8,
+                completedTasks: 38
+            },
+            {
+                id: 3,
+                name: 'Mike Wilson',
+                role: 'Installation Specialist',
+                status: 'Working',
+                email: 'mike@hydra-terra.com',
+                phone: '0411 333 333',
+                location: '456 Riverside Ave, Brisbane',
+                tasksToday: 4,
+                rating: 4.7,
+                completedTasks: 52
+            },
+            {
+                id: 4,
+                name: 'Emma Davis',
+                role: 'Maintenance Tech',
+                status: 'Available',
+                email: 'emma@hydra-terra.com',
+                phone: '0411 444 444',
+                location: 'Hydra-Terra Office',
+                tasksToday: 0,
+                rating: 4.6,
+                completedTasks: 31
+            },
+            {
+                id: 5,
+                name: 'Chris Brown',
+                role: 'Equipment Operator',
+                status: 'Off',
+                email: 'chris@hydra-terra.com',
+                phone: '0411 555 555',
+                location: 'Off Duty',
+                tasksToday: 0,
+                rating: 4.8,
+                completedTasks: 28
+            }
+        ];
+
+        const assignments = [
+            { id: 1, task: 'Install irrigation system', assignee: 'John Smith', project: 'Backyard Paradise', dueDate: '2026-01-05', status: 'In Progress' },
+            { id: 2, task: 'Design landscape layout', assignee: 'Sarah Johnson', project: 'Commercial Landscape', dueDate: '2026-01-06', status: 'In Progress' },
+            { id: 3, task: 'Prepare groundwork', assignee: 'Mike Wilson', project: 'Water Feature Install', dueDate: '2026-01-10', status: 'Pending' },
+            { id: 4, task: 'Equipment maintenance', assignee: 'Emma Davis', project: 'General', dueDate: '2026-01-08', status: 'Completed' },
+            { id: 5, task: 'Site cleanup and finishing', assignee: 'John Smith', project: 'Backyard Paradise', dueDate: '2026-01-20', status: 'Pending' }
+        ];
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'crew') loadCrew();
+            if (tabName === 'assignments') loadAssignments();
+            if (tabName === 'tracking') loadTracking();
+        }
+
+        function getStatusClass(status) {
+            if (status === 'Working') return 'status-working';
+            if (status === 'Available') return 'status-available';
+            if (status === 'Off') return 'status-off';
+        }
+
+        function loadCrew() {
+            let html = '';
+            crew.forEach(member => {
+                html += `
+                    <div class="crew-card">
+                        <div class="crew-header">
+                            <div>
+                                <div class="crew-name">👤 ${member.name}</div>
+                                <div style="color: #999; font-size: 0.9em;">${member.role}</div>
+                            </div>
+                            <span class="crew-status ${getStatusClass(member.status)}">${member.status}</span>
+                        </div>
+                        <div class="crew-info">
+                            <div class="info-item">
+                                <div class="info-label">📧 Email</div>
+                                <div class="info-value">${member.email}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">📞 Phone</div>
+                                <div class="info-value">${member.phone}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">📍 Current Location</div>
+                                <div class="info-value">${member.location}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">⭐ Rating</div>
+                                <div class="info-value">${member.rating}/5.0</div>
+                            </div>
+                        </div>
+                        <div class="task-list">
+                            <strong style="color: #00ff99;">Today's Tasks: ${member.tasksToday}</strong><br>
+                            <div style="color: #999; margin-top: 5px;">Completed This Month: ${member.completedTasks}</div>
+                        </div>
+                        <button class="btn" onclick="contactMember(${member.id})">📞 Contact</button>
+                        <button class="btn secondary" onclick="viewPerformance(${member.id})">📊 Performance</button>
+                    </div>
+                `;
+            });
+            document.getElementById('crewList').innerHTML = html;
+        }
+
+        function loadAssignments() {
+            let html = '';
+            assignments.forEach(assignment => {
+                const statusColor = assignment.status === 'Completed' ? '#00ff99' : assignment.status === 'In Progress' ? '#00ccff' : '#ff9500';
+                html += `
+                    <div class="crew-card">
+                        <div class="crew-header">
+                            <div class="crew-name">${assignment.task}</div>
+                            <span class="crew-status" style="background: ${statusColor}; color: #001a4d;">${assignment.status}</span>
+                        </div>
+                        <div class="crew-info">
+                            <div class="info-item">
+                                <div class="info-label">👤 Assigned To</div>
+                                <div class="info-value">${assignment.assignee}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">🏗️ Project</div>
+                                <div class="info-value">${assignment.project}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">📅 Due Date</div>
+                                <div class="info-value">${new Date(assignment.dueDate).toLocaleDateString()}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">⏱️ Days Left</div>
+                                <div class="info-value">${Math.ceil((new Date(assignment.dueDate) - new Date()) / (1000 * 60 * 60 * 24))}</div>
+                            </div>
+                        </div>
+                        <button class="btn" onclick="editAssignment(${assignment.id})">✏️ Edit</button>
+                        <button class="btn secondary" onclick="completeTask(${assignment.id})">✓ Complete</button>
+                    </div>
+                `;
+            });
+            document.getElementById('assignmentsList').innerHTML = html;
+        }
+
+        function loadTracking() {
+            let html = '<div style="color: #b0b0b0;">';
+            crew.filter(m => m.status !== 'Off').forEach(member => {
+                html += `
+                    <div class="crew-card">
+                        <div class="crew-header">
+                            <div class="crew-name">📍 ${member.name}</div>
+                            <span class="crew-status ${getStatusClass(member.status)}">${member.status}</span>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Current Location</div>
+                            <div class="info-value">${member.location}</div>
+                        </div>
+                        <div class="info-item" style="margin-top: 10px;">
+                            <div class="info-label">Current Assignment</div>
+                            <div class="info-value">${assignments.find(a => a.assignee === member.name)?.task || 'Break/Available'}</div>
+                        </div>
+                        <button class="btn" onclick="viewRoute(${member.id})">🗺️ View Route</button>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            document.getElementById('trackingList').innerHTML = html;
+        }
+
+        function loadDashboard() {
+            // Today's overview
+            let overview = '<div style="color: #b0b0b0;">';
+            crew.filter(m => m.status !== 'Off').forEach(member => {
+                overview += `
+                    <div class="crew-card" style="background: rgba(0, 100, 200, 0.2); margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <div><strong style="color: #00ff99;">${member.name}</strong><br><span style="color: #999;">${member.role}</span></div>
+                            <div style="text-align: right;"><span style="color: #00ccff; font-weight: bold;">${member.tasksToday} tasks</span></div>
+                        </div>
+                    </div>
+                `;
+            });
+            overview += '</div>';
+            document.getElementById('todayOverview').innerHTML = overview;
+
+            // Top performers
+            let topPerf = '<div style="color: #b0b0b0;">';
+            crew.sort((a, b) => b.rating - a.rating).slice(0, 3).forEach(member => {
+                topPerf += `
+                    <div class="crew-card" style="background: rgba(0, 255, 153, 0.1); margin-bottom: 10px; border-left: 4px solid #00ff99;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <div><strong style="color: #00ff99;">${member.name}</strong><br><span style="color: #999;">${member.completedTasks} completed</span></div>
+                            <div style="text-align: right;"><span style="color: #00ff99; font-weight: bold;">⭐ ${member.rating}</span></div>
+                        </div>
+                    </div>
+                `;
+            });
+            topPerf += '</div>';
+            document.getElementById('topPerformers').innerHTML = topPerf;
+        }
+
+        function contactMember(memberId) {
+            const member = crew.find(c => c.id === memberId);
+            alert(`📞 Contact ${member.name}\n\nPhone: ${member.phone}\nEmail: ${member.email}`);
+        }
+
+        function viewPerformance(memberId) {
+            const member = crew.find(c => c.id === memberId);
+            alert(`📊 ${member.name}'s Performance\n\nRating: ${member.rating}/5.0\nTasks Completed: ${member.completedTasks}\nToday's Tasks: ${member.tasksToday}`);
+        }
+
+        function editAssignment(assignmentId) {
+            alert('✏️ Edit assignment coming soon!');
+        }
+
+        function completeTask(assignmentId) {
+            alert('✓ Task marked as complete!');
+        }
+
+        function viewRoute(memberId) {
+            alert('🗺️ Route optimization coming soon!');
+        }
+
+        function addNewCrew() {
+            alert('➕ Add new crew member form coming soon!');
+        }
+
+        function assignNewTask() {
+            alert('➕ Create new task assignment form coming soon!');
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            loadDashboard();
+        });
+    </script>
+</body>
+</html>

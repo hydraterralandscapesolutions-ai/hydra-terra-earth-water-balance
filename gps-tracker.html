@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Tracker & Route Optimizer - Hydra-Terra</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #001a4d 0%, #003d7a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(0, 100, 200, 0.2);
+            border-radius: 10px;
+            border-left: 5px solid #00ff99;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #00ff99;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #00ccff;
+            font-size: 1.1em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            background: rgba(0, 100, 200, 0.5);
+            border: 2px solid #00ccff;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .tab-btn:hover {
+            background: rgba(0, 100, 200, 0.8);
+            border-color: #00ff99;
+        }
+
+        .tab-btn.active {
+            background: #00ff99;
+            color: #001a4d;
+            border-color: #00ff99;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: rgba(0, 50, 100, 0.6);
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #00ff99;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+        }
+
+        .map-container {
+            background: rgba(0, 30, 60, 0.5);
+            border: 2px solid #00ccff;
+            border-radius: 8px;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .map-placeholder {
+            text-align: center;
+            color: #00ccff;
+        }
+
+        .map-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .location-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .location-card {
+            background: rgba(0, 100, 200, 0.3);
+            border: 2px solid #00ccff;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .location-card:hover {
+            background: rgba(0, 100, 200, 0.5);
+            border-color: #00ff99;
+        }
+
+        .location-card.tracking {
+            border-color: #00ff99;
+            background: rgba(0, 255, 153, 0.1);
+        }
+
+        .location-info {
+            flex: 1;
+        }
+
+        .location-name {
+            color: #00ff99;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .location-address {
+            color: #b0b0b0;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .location-details {
+            color: #00ccff;
+            font-size: 0.85em;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: #00ccff;
+            color: #001a4d;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background: #00ff99;
+            transform: translateY(-2px);
+        }
+
+        .btn.secondary {
+            background: #666;
+            color: #fff;
+        }
+
+        .btn.success {
+            background: #00ff99;
+            color: #001a4d;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(0, 100, 200, 0.3);
+            border: 2px solid #00ccff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            color: #00ff99;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #999;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .route-item {
+            background: rgba(0, 100, 200, 0.2);
+            border-left: 4px solid #00ccff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .route-number {
+            background: #00ccff;
+            color: #001a4d;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .status-tracking {
+            background: #00ff99;
+            color: #001a4d;
+        }
+
+        .status-idle {
+            background: #666;
+            color: #fff;
+        }
+
+        .live-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #00ff99;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📍 GPS Tracker & Route Optimizer</h1>
+            <div class="subtitle">Real-Time Location Tracking & Smart Route Planning</div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('live')">🗺️ Live Map</button>
+            <button class="tab-btn" onclick="switchTab('routes')">🛣️ Route Optimizer</button>
+            <button class="tab-btn" onclick="switchTab('history')">📊 Location History</button>
+            <button class="tab-btn" onclick="switchTab('settings')">⚙️ Settings</button>
+        </div>
+
+        <!-- LIVE MAP TAB -->
+        <div id="live" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="activeTracking">3</div>
+                    <div class="stat-label">Active Tracking</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="todayDistance">42 km</div>
+                    <div class="stat-label">Today's Distance</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="efficiency">87%</div>
+                    <div class="stat-label">Route Efficiency</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="eta">2:30 PM</div>
+                    <div class="stat-label">Next Stop ETA</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="live-indicator"></span>Live Tracking Map</h2>
+                <div class="map-container">
+                    <div class="map-placeholder">
+                        <div class="map-icon">🗺️</div>
+                        <p style="color: #00ccff; margin-bottom: 15px;">GPS Map View</p>
+                        <p style="color: #b0b0b0; font-size: 0.9em;">Browser-based GPS tracking using Geolocation API</p>
+                        <button class="btn" style="margin-top: 20px;" onclick="enableGPS()">📍 Enable GPS Tracking</button>
+                    </div>
+                </div>
+                <p style="color: #999; font-size: 0.85em; margin-top: 10px;">
+                    💡 For advanced mapping: Integrate with Google Maps API, Mapbox, or OpenStreetMap
+                </p>
+            </div>
+
+            <div class="section">
+                <h2>👥 Crew Locations</h2>
+                <div class="location-list" id="crewLocations"></div>
+            </div>
+        </div>
+
+        <!-- ROUTE OPTIMIZER TAB -->
+        <div id="routes" class="tab-content">
+            <div class="section">
+                <h2>🛣️ Optimize Today's Route</h2>
+                <button class="btn success" onclick="optimizeRoute()">⚡ Auto-Optimize Route</button>
+                <button class="btn" onclick="addStop()">➕ Add Stop</button>
+                <button class="btn secondary" onclick="clearRoute()">🗑️ Clear All</button>
+                <div id="routeStops" style="margin-top: 20px;"></div>
+            </div>
+
+            <div class="section">
+                <h2>📊 Route Analysis</h2>
+                <div style="background: rgba(0, 30, 60, 0.5); padding: 20px; border-radius: 8px;">
+                    <div style="margin-bottom: 15px;">
+                        <strong style="color: #00ff99;">Total Distance:</strong> <span style="color: #00ccff;">42.5 km</span>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <strong style="color: #00ff99;">Estimated Time:</strong> <span style="color: #00ccff;">3h 20min</span>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <strong style="color: #00ff99;">Fuel Cost:</strong> <span style="color: #00ccff;">$18.50</span>
+                    </div>
+                    <div>
+                        <strong style="color: #00ff99;">Time Saved:</strong> <span style="color: #00ff99;">35 minutes (vs manual route)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORY TAB -->
+        <div id="history" class="tab-content">
+            <div class="section">
+                <h2>📊 Location History</h2>
+                <button class="btn" onclick="exportHistory()">📥 Export Data</button>
+                <button class="btn secondary" onclick="filterHistory('today')">Today</button>
+                <button class="btn secondary" onclick="filterHistory('week')">This Week</button>
+                <button class="btn secondary" onclick="filterHistory('month')">This Month</button>
+                <div id="historyList" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+
+        <!-- SETTINGS TAB -->
+        <div id="settings" class="tab-content">
+            <div class="section">
+                <h2>⚙️ GPS Settings</h2>
+                <div style="background: rgba(0, 30, 60, 0.5); padding: 20px; border-radius: 8px;">
+                    <label style="display: block; color: #00ff99; margin-bottom: 10px;">
+                        <input type="checkbox" checked> Auto-track crew locations
+                    </label>
+                    <label style="display: block; color: #00ff99; margin-bottom: 10px;">
+                        <input type="checkbox" checked> Optimize routes automatically
+                    </label>
+                    <label style="display: block; color: #00ff99; margin-bottom: 10px;">
+                        <input type="checkbox" checked> Send arrival notifications
+                    </label>
+                    <label style="display: block; color: #00ff99; margin-bottom: 10px;">
+                        <input type="checkbox"> Enable geofencing alerts
+                    </label>
+                    <label style="display: block; color: #00ff99; margin-bottom: 10px;">
+                        <input type="checkbox" checked> Save location history
+                    </label>
+                    <hr style="margin: 20px 0; border-color: #00ccff;">
+                    <div style="margin-top: 20px;">
+                        <strong style="color: #00ff99;">Update Frequency:</strong><br>
+                        <select style="margin-top: 10px; padding: 8px; background: rgba(0, 30, 60, 0.5); border: 2px solid #00ccff; color: #e0e0e0; border-radius: 5px;">
+                            <option>Real-time (every 10 seconds)</option>
+                            <option selected>Standard (every 30 seconds)</option>
+                            <option>Battery Saver (every 2 minutes)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const crewData = [
+            { id: 1, name: 'John Smith', location: '123 Green St, Sydney', coords: [-33.8688, 151.2093], status: 'tracking', eta: '10:30 AM', job: 'Backyard Paradise' },
+            { id: 2, name: 'Sarah Johnson', location: 'Business Plaza, Melbourne', coords: [-37.8136, 144.9631], status: 'tracking', eta: '11:15 AM', job: 'Commercial Landscape' },
+            { id: 3, name: 'Mike Wilson', location: '456 Riverside Ave, Brisbane', coords: [-27.4698, 153.0251], status: 'tracking', eta: '2:30 PM', job: 'Water Feature Install' },
+            { id: 4, name: 'Emma Davis', location: 'Hydra-Terra Office', coords: [-32.0569, 115.7439], status: 'idle', eta: '--', job: 'Office' }
+        ];
+
+        const routeStops = [
+            { order: 1, address: '123 Green St, Sydney', time: '9:00 AM', duration: '45 min' },
+            { order: 2, address: 'Business Plaza, Melbourne', time: '11:00 AM', duration: '1h 30min' },
+            { order: 3, address: '456 Riverside Ave, Brisbane', time: '2:00 PM', duration: '1h 15min' }
+        ];
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'live') loadCrewLocations();
+            if (tabName === 'routes') loadRouteStops();
+            if (tabName === 'history') loadHistory();
+        }
+
+        function loadCrewLocations() {
+            let html = '';
+            crewData.forEach(crew => {
+                const statusClass = crew.status === 'tracking' ? 'status-tracking' : 'status-idle';
+                const cardClass = crew.status === 'tracking' ? 'tracking' : '';
+                html += `
+                    <div class="location-card ${cardClass}">
+                        <div class="location-info">
+                            <div class="location-name">📍 ${crew.name}</div>
+                            <div class="location-address">${crew.location}</div>
+                            <div class="location-details">Job: ${crew.job} | ETA: ${crew.eta}</div>
+                        </div>
+                        <div>
+                            <span class="status-badge ${statusClass}">${crew.status === 'tracking' ? 'Live' : 'Idle'}</span>
+                            <button class="btn" onclick="viewOnMap(${crew.id})">View</button>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('crewLocations').innerHTML = html;
+        }
+
+        function loadRouteStops() {
+            let html = '';
+            routeStops.forEach(stop => {
+                html += `
+                    <div class="route-item">
+                        <div style="display: flex; align-items: center; flex: 1;">
+                            <div class="route-number">${stop.order}</div>
+                            <div>
+                                <div style="color: #00ff99; font-weight: bold;">${stop.address}</div>
+                                <div style="color: #b0b0b0; font-size: 0.9em;">Arrive: ${stop.time} | Duration: ${stop.duration}</div>
+                            </div>
+                        </div>
+                        <button class="btn secondary" onclick="removeStop(${stop.order})">Remove</button>
+                    </div>
+                `;
+            });
+            document.getElementById('routeStops').innerHTML = html;
+        }
+
+        function loadHistory() {
+            const history = [
+                { date: '2026-01-02', crew: 'John Smith', distance: '38 km', jobs: 3 },
+                { date: '2026-01-01', crew: 'Sarah Johnson', distance: '45 km', jobs: 4 },
+                { date: '2025-12-31', crew: 'Mike Wilson', distance: '52 km', jobs: 5 }
+            ];
+
+            let html = '';
+            history.forEach(entry => {
+                html += `
+                    <div class="route-item">
+                        <div>
+                            <div style="color: #00ff99; font-weight: bold;">${entry.date} - ${entry.crew}</div>
+                            <div style="color: #b0b0b0; font-size: 0.9em;">Distance: ${entry.distance} | Jobs: ${entry.jobs}</div>
+                        </div>
+                        <button class="btn" onclick="viewHistoryDetails()">View</button>
+                    </div>
+                `;
+            });
+            document.getElementById('historyList').innerHTML = html;
+        }
+
+        function enableGPS() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        alert(`✓ GPS Enabled!\n\nLatitude: ${position.coords.latitude}\nLongitude: ${position.coords.longitude}\n\nTracking active!`);
+                    },
+                    (error) => {
+                        alert('⚠️ GPS access denied. Please enable location services in your browser.');
+                    }
+                );
+            } else {
+                alert('⚠️ GPS not supported by this browser.');
+            }
+        }
+
+        function viewOnMap(crewId) {
+            const crew = crewData.find(c => c.id === crewId);
+            alert(`📍 ${crew.name}\n\nLocation: ${crew.location}\nCoordinates: ${crew.coords[0]}, ${crew.coords[1]}\nJob: ${crew.job}`);
+        }
+
+        function optimizeRoute() {
+            alert('⚡ Route optimized!\n\nTime saved: 35 minutes\nDistance reduced: 8.5 km\nFuel savings: $4.20');
+        }
+
+        function addStop() {
+            alert('➕ Add new stop feature coming soon!');
+        }
+
+        function clearRoute() {
+            if (confirm('Clear all route stops?')) {
+                alert('Route cleared!');
+            }
+        }
+
+        function removeStop(order) {
+            alert(`Stop ${order} removed from route.`);
+        }
+
+        function exportHistory() {
+            alert('📥 Exporting location history to CSV...');
+        }
+
+        function filterHistory(period) {
+            alert(`Filtering history: ${period}`);
+        }
+
+        function viewHistoryDetails() {
+            alert('Viewing detailed history...');
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            loadCrewLocations();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Bots - Hydra-Terra Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #001a4d 0%, #003d7a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(0, 100, 200, 0.2);
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #00ff99;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #00ccff;
+            font-size: 1.1em;
+        }
+
+        .bot-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .bot-btn {
+            background: rgba(0, 100, 200, 0.3);
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .bot-btn:hover {
+            background: rgba(0, 100, 200, 0.6);
+            border-color: #00ff99;
+            transform: translateY(-5px);
+        }
+
+        .bot-btn.active {
+            background: rgba(0, 255, 153, 0.2);
+            border-color: #00ff99;
+        }
+
+        .bot-avatar {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #00ff99, #00ccff);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+        }
+
+        .bot-name {
+            color: #00ff99;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .bot-role {
+            color: #b0b0b0;
+            font-size: 0.9em;
+        }
+
+        .chat-container {
+            background: rgba(0, 50, 100, 0.6);
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: rgba(0, 100, 200, 0.5);
+            padding: 15px;
+            border-bottom: 2px solid #00ccff;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-avatar-small {
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, #00ff99, #00ccff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 15px;
+            line-height: 1.5;
+        }
+
+        .message.bot .message-bubble {
+            background: rgba(0, 255, 153, 0.2);
+            border: 1px solid #00ff99;
+            color: #e0e0e0;
+        }
+
+        .message.user .message-bubble {
+            background: rgba(0, 200, 255, 0.3);
+            border: 1px solid #00ccff;
+            color: #fff;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+            color: #00ff99;
+            font-style: italic;
+        }
+
+        .typing-indicator.active {
+            display: block;
+        }
+
+        .chat-input {
+            padding: 15px;
+            border-top: 2px solid #00ccff;
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            background: rgba(0, 30, 60, 0.5);
+            border: 2px solid #00ccff;
+            border-radius: 5px;
+            color: #e0e0e0;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #00ff99;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            background: #00ccff;
+            color: #001a4d;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #00ff99;
+            transform: translateY(-2px);
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .quick-btn {
+            padding: 8px 15px;
+            background: rgba(0, 100, 200, 0.3);
+            border: 1px solid #00ccff;
+            color: #00ccff;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .quick-btn:hover {
+            background: rgba(0, 255, 153, 0.2);
+            border-color: #00ff99;
+            color: #00ff99;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 Interactive Bots</h1>
+            <div class="subtitle">Chat with HYDRA, TERRA, or SOL</div>
+        </header>
+
+        <div class="bot-selector">
+            <div class="bot-btn active" onclick="selectBot('hydra')">
+                <div class="bot-avatar">⚡</div>
+                <div class="bot-name">HYDRA Bot</div>
+                <div class="bot-role">Backend Operations</div>
+            </div>
+            <div class="bot-btn" onclick="selectBot('terra')">
+                <div class="bot-avatar">🎨</div>
+                <div class="bot-name">TERRA Bot</div>
+                <div class="bot-role">Frontend Interface</div>
+            </div>
+            <div class="bot-btn" onclick="selectBot('sol')">
+                <div class="bot-avatar">🗓️</div>
+                <div class="bot-name">SOL Bot</div>
+                <div class="bot-role">Personal Assistant</div>
+            </div>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-avatar-small" id="chatAvatar">⚡</div>
+                <div>
+                    <div class="bot-name" id="chatBotName">HYDRA Bot</div>
+                    <div class="bot-role" id="chatBotRole">Backend Operations</div>
+                </div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div class="message-bubble">
+                        👋 Hey there! I'm HYDRA, your backend automation specialist. I handle emails, social media, photo organization, and all the behind-the-scenes magic. What can I help you automate today?
+                    </div>
+                </div>
+            </div>
+            <div class="typing-indicator" id="typingIndicator">HYDRA is typing...</div>
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Ask me anything..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button class="btn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <button class="quick-btn" onclick="quickMessage('Tell me about your features')">What can you do?</button>
+            <button class="quick-btn" onclick="quickMessage('Help me get started')">Getting started</button>
+            <button class="quick-btn" onclick="quickMessage('Show me automation tips')">Automation tips</button>
+            <button class="quick-btn" onclick="quickMessage('Tell me a joke')">Tell a joke</button>
+        </div>
+    </div>
+
+    <script>
+        let currentBot = 'hydra';
+
+        const botData = {
+            hydra: {
+                name: 'HYDRA Bot',
+                role: 'Backend Operations',
+                avatar: '⚡',
+                color: '#0064C8',
+                responses: {
+                    'features': 'I specialize in:\n✓ Email management (Gmail/Outlook)\n✓ Social media automation\n✓ Photo organization & tagging\n✓ Background task processing\n✓ Data synchronization\n\nI work 24/7 so you don\'t have to!',
+                    'started': 'Getting started is easy! I can:\n1. Connect to your email accounts\n2. Set up social media posting schedules\n3. Organize your photos automatically\n4. Run background tasks while you sleep\n\nJust tell me what you need!',
+                    'automation': '💡 Pro automation tips:\n• Set up email filters to auto-organize\n• Schedule social posts during peak hours\n• Enable photo auto-backup to cloud\n• Use keyboard shortcuts (I love efficiency!)',
+                    'joke': 'Why do programmers prefer dark mode? Because light attracts bugs! 😄',
+                    'default': 'I\'m here to help automate your backend operations! Ask me about emails, social media, photos, or automation workflows.'
+                }
+            },
+            terra: {
+                name: 'TERRA Bot',
+                role: 'Frontend Interface',
+                avatar: '🎨',
+                color: '#2D5016',
+                responses: {
+                    'features': 'I bring beauty to your business:\n✓ Camera & photo management\n✓ Video processing & effects\n✓ Dashboard UI customization\n✓ Visual feedback & animations\n✓ Branding & design tools\n\nI make everything look amazing!',
+                    'started': 'Let\'s make things beautiful! I can help you:\n1. Capture & organize photos\n2. Add effects to videos\n3. Customize your dashboard\n4. Create visual content\n\nWhat would you like to create?',
+                    'automation': '🎨 Design automation tips:\n• Batch process photos with filters\n• Auto-generate branded content\n• Schedule visual updates\n• Use templates for consistency',
+                    'joke': 'Why did the graphic designer break up with the font? It wasn\'t her type! 😊',
+                    'default': 'I\'m all about making things visually stunning! Ask me about photos, videos, design, or UI customization.'
+                }
+            },
+            sol: {
+                name: 'SOL Bot',
+                role: 'Personal Assistant',
+                avatar: '🗓️',
+                color: '#00CCFF',
+                responses: {
+                    'features': 'I help you maintain work-life balance:\n✓ Calendar management\n✓ Schedule optimization\n✓ Event reminders\n✓ Personal time blocking\n✓ Wellness tracking\n\nYour wellbeing is my priority!',
+                    'started': 'Let\'s organize your life! I can:\n1. Sync your calendars\n2. Block personal time\n3. Set up smart reminders\n4. Prevent scheduling conflicts\n\nWhat\'s your biggest scheduling challenge?',
+                    'automation': '🗓️ Calendar automation tips:\n• Block "focus time" daily\n• Auto-decline conflicting meetings\n• Set recurring personal time\n• Enable smart notifications',
+                    'joke': 'Why did the calendar go to therapy? It had too many issues! 😄',
+                    'default': 'I\'m here to help you balance work and life! Ask me about calendars, scheduling, reminders, or time management.'
+                }
+            }
+        };
+
+        function selectBot(bot) {
+            currentBot = bot;
+            const data = botData[bot];
+            
+            document.getElementById('chatAvatar').textContent = data.avatar;
+            document.getElementById('chatBotName').textContent = data.name;
+            document.getElementById('chatBotRole').textContent = data.role;
+            
+            // Update active button
+            document.querySelectorAll('.bot-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.bot-btn').classList.add('active');
+            
+            // Clear chat and show welcome
+            document.getElementById('chatMessages').innerHTML = `
+                <div class="message bot">
+                    <div class="message-bubble">
+                        👋 Hey! I'm ${data.name}, your ${data.role.toLowerCase()}. ${getWelcomeMessage(bot)}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('typingIndicator').textContent = `${data.name} is typing...`;
+        }
+
+        function getWelcomeMessage(bot) {
+            const messages = {
+                hydra: 'I handle all your backend automation - emails, social media, and data processing. What can I automate for you?',
+                terra: 'I make everything look beautiful - photos, videos, and your entire dashboard. Ready to create something amazing?',
+                sol: 'I keep your schedule balanced and your life organized. How can I help you manage your time better?'
+            };
+            return messages[bot];
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Show typing indicator
+            const typing = document.getElementById('typingIndicator');
+            typing.classList.add('active');
+            
+            // Simulate bot response
+            setTimeout(() => {
+                typing.classList.remove('active');
+                const response = getBotResponse(message);
+                addMessage(response, 'bot');
+            }, 1000);
+        }
+
+        function quickMessage(msg) {
+            document.getElementById('messageInput').value = msg;
+            sendMessage();
+        }
+
+        function addMessage(text, sender) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.innerHTML = `<div class="message-bubble">${text}</div>`;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function getBotResponse(message) {
+            const bot = botData[currentBot];
+            const lowerMsg = message.toLowerCase();
+            
+            if (lowerMsg.includes('feature') || lowerMsg.includes('what can you do') || lowerMsg.includes('capabilities')) {
+                return bot.responses.features;
+            } else if (lowerMsg.includes('start') || lowerMsg.includes('begin') || lowerMsg.includes('help')) {
+                return bot.responses.started;
+            } else if (lowerMsg.includes('automation') || lowerMsg.includes('tip') || lowerMsg.includes('advice')) {
+                return bot.responses.automation;
+            } else if (lowerMsg.includes('joke') || lowerMsg.includes('funny')) {
+                return bot.responses.joke;
+            } else {
+                return bot.responses.default;
+            }
+        }
+    </script>
+</body>
+</html>

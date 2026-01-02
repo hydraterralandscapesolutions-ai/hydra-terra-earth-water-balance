@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hydra-Terra 2025 World - Business Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #001a4d 0%, #003d7a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(0, 100, 200, 0.2);
+            border-radius: 10px;
+            border-left: 5px solid #00ff99;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #00ff99;
+            text-shadow: 0 0 10px rgba(0, 255, 153, 0.5);
+        }
+
+        .subtitle {
+            color: #00ccff;
+            font-size: 1.3em;
+            margin: 10px 0;
+        }
+
+        .tagline {
+            color: #fff;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .tool-card {
+            background: rgba(0, 50, 100, 0.6);
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            padding: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .tool-card:hover {
+            background: rgba(0, 100, 150, 0.8);
+            border-color: #00ff99;
+            box-shadow: 0 0 16px rgba(0, 255, 153, 0.25);
+            transform: translateY(-3px);
+        }
+
+        .tool-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #00ff99;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .tool-desc {
+            color: #b0b0b0;
+            font-size: 0.95em;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            background: rgba(0, 255, 153, 0.2);
+            border: 1px solid #00ff99;
+            color: #00ff99;
+        }
+
+        .btn-open {
+            display: inline-block;
+            padding: 10px 16px;
+            background: #00ccff;
+            color: #001a4d;
+            font-weight: bold;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-open:hover {
+            background: #00ff99;
+            transform: translateY(-2px);
+        }
+
+        .card {
+            background: rgba(0, 50, 100, 0.6);
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            background: rgba(0, 100, 150, 0.8);
+            border-color: #00ff99;
+            box-shadow: 0 0 20px rgba(0, 255, 153, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #00ff99;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-icon {
+            font-size: 1.8em;
+        }
+
+        .card p {
+            color: #b0b0b0;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .card li {
+            padding: 5px 0;
+            color: #c0c0c0;
+        }
+
+        .card li:before {
+            content: "✓ ";
+            color: #00ff99;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .status.online {
+            background: #00ff99;
+            color: #001a4d;
+        }
+
+        .status.ready {
+            background: #ffaa00;
+            color: #001a4d;
+        }
+
+        .bot-section {
+            background: rgba(0, 30, 60, 0.7);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .bot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .bot-card {
+            background: linear-gradient(135deg, rgba(0, 100, 200, 0.3), rgba(0, 150, 150, 0.3));
+            border: 2px solid #00ccff;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .bot-avatar {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #00ff99, #00ccff);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+        }
+
+        .bot-name {
+            font-size: 1.5em;
+            color: #00ff99;
+            margin-bottom: 10px;
+        }
+
+        .bot-role {
+            color: #00ccff;
+            margin-bottom: 15px;
+        }
+
+        .contact-info {
+            background: rgba(0, 50, 100, 0.4);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .contact-info h3 {
+            color: #00ff99;
+            margin-bottom: 15px;
+        }
+
+        .contact-info p {
+            color: #c0c0c0;
+            margin: 8px 0;
+        }
+
+        .contact-info a {
+            color: #00ccff;
+            text-decoration: none;
+        }
+
+        .contact-info a:hover {
+            color: #00ff99;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .dashboard-grid, .bot-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌍 HYDRA-TERRA 2025 WORLD 💧</h1>
+            <div class="subtitle">Complete Business Automation Suite</div>
+            <div class="tagline">Earth • Water • Balance</div>
+            <div style="color: #00ccff; margin-top: 15px; font-size: 1.1em;">18 Tools • 3 AI Bots • Full Automation</div>
+            <div class="status online pulse">All Systems Online</div>
+        </header>
+
+        <section class="bot-section">
+            <h2 style="color: #00ff99; text-align: center; margin-bottom: 25px; font-size: 2em;">Your AI Bot Team</h2>
+            <div class="bot-grid">
+                <div class="bot-card">
+                    <div class="bot-avatar">⚡</div>
+                    <div class="bot-name">HYDRA Bot</div>
+                    <div class="bot-role">Backend Operations</div>
+                    <ul>
+                        <li>Email Management</li>
+                        <li>Social Media</li>
+                        <li>Photo Organization</li>
+                        <li>Automation Engine</li>
+                    </ul>
+                    <div class="status online">Online</div>
+                </div>
+
+                <div class="bot-card">
+                    <div class="bot-avatar">🎨</div>
+                    <div class="bot-name">TERRA Bot</div>
+                    <div class="bot-role">Frontend Interface</div>
+                    <ul>
+                        <li>Camera & Photos</li>
+                        <li>Video Processing</li>
+                        <li>Dashboard UI</li>
+                        <li>Visual Feedback</li>
+                    </ul>
+                    <div class="status online">Online</div>
+                </div>
+
+                <div class="bot-card">
+                    <div class="bot-avatar">🗓️</div>
+                    <div class="bot-name">SOL Bot</div>
+                    <div class="bot-role">Personal Assistant</div>
+                    <ul>
+                        <li>Calendar Management</li>
+                        <li>Schedule Blocking</li>
+                        <li>Event Reminders</li>
+                        <li>Work-Life Balance</li>
+                    </ul>
+                    <div class="status online">Online</div>
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-bottom: 25px;">
+            <h2 style="color: #00ff99; margin-bottom: 12px;">Core Suite (8) – Launchpad</h2>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <div class="tool-title">📁 Project Tracker Pro <span class="badge">Core</span></div>
+                    <div class="tool-desc">Projects, budgets, status, profitability.</div>
+                    <a class="btn-open" href="project-tracker-pro.html" target="_blank">Open</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-title">📅 Appointment Scheduler <span class="badge">Core</span></div>
+                    <div class="tool-desc">Calendar, routes, confirmations, reminders.</div>
+                    <a class="btn-open" href="appointment-scheduler.html" target="_blank">Open</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-title">💼 Invoice & Quote Generator <span class="badge">Core</span></div>
+                    <div class="tool-desc">Quotes/invoices, tax, PDF-ready, payments.</div>
+                    <a class="btn-open" href="invoice-generator.html" target="_blank">Open</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-title">🧹 Duplicate Detector Pro <span class="badge">Core</span></div>
+                    <div class="tool-desc">Files, photos, cloud duplicate detection.</div>
+                    <a class="btn-open" href="duplicate-detector-pro.html" target="_blank">Open</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-title">🎨 Branding Customizer <span class="badge">Core</span></div>
+                    <div class="tool-desc">Logos, colors, signature, white-label toggle.</div>
+                    <a class="btn-open" href="branding-customizer.html" target="_blank">Open</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-title">🎬 Animation Studio Pro <span class="badge">Core</span></div>
+                    <div class="tool-desc">Text/video effects, slideshows, presets.</div>
+                    <a class="btn-open" href="animation-studio-pro.html" target="_blank">Open</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-title">✅ Task Manager <span class="badge">Core</span></div>
+                    <div class="tool-desc">Tasks, priorities, recurrence, analytics.</div>
+                    <a class="btn-open" href="task-manager.html" target="_blank">Open</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-title">⚙️ Automation Master <span class="badge">Core</span></div>
+                    <div class="tool-desc">Run/enable all automations, logs, schedule.</div>
+                    <a class="btn-open" href="automation-master.html" target="_blank">Open</a>
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-bottom: 25px;">
+            <h2 style="color: #00ff99; margin-bottom: 12px;">Add-on Suite (4) – Launchpad</h2>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <div class="tool-title">🌐 Client Dashboard <span class="badge">Add-on</span></div>
+                    <div class="tool-desc">Client-facing progress, appointments, gallery.</div>
+                    <a class="btn-open" href="client-dashboard.html" target="_blank">Open</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-title">👥 Team Portal <span class="badge">Add-on</span></div>
+                    <div class="tool-desc">Crew tracking, assignments, performance.</div>
+                    <a class="btn-open" href="team-portal.html" target="_blank">Open</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-title">📊 Advanced Analytics <span class="badge">Add-on</span></div>
+                    <div class="tool-desc">Revenue, profitability, crew KPIs, trends.</div>
+                    <a class="btn-open" href="advanced-analytics.html" target="_blank">Open</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-title">💰 Expense & Payroll <span class="badge">Add-on</span></div>
+                    <div class="tool-desc">Expenses, payroll, budgets, summaries.</div>
+                    <a class="btn-open" href="expense-payroll-manager.html" target="_blank">Open</a>
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-bottom: 25px;">
+            <h2 style="color: #00ff99; margin-bottom: 12px;">⚡ Advanced Features (4) – Launchpad</h2>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <div class="tool-title">📍 GPS Tracker & Routes <span class="badge">New</span></div>
+                    <div class="tool-desc">Real-time location, route optimization, geofencing.</div>
+                    <a class="btn-open" href="gps-tracker.html" target="_blank">Open</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-title">🎬 Media Player Pro <span class="badge">New</span></div>
+                    <div class="tool-desc">MP4 player with playlist, speed control, fullscreen.</div>
+                    <a class="btn-open" href="media-player.html" target="_blank">Open</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-title">⚡ Automation Hub <span class="badge">New</span></div>
+                    <div class="tool-desc">Cross-tool integration, event-driven automation.</div>
+                    <a class="btn-open" href="automation-hub.html" target="_blank">Open</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-title">💬 Interactive Bots <span class="badge">New</span></div>
+                    <div class="tool-desc">Chat with HYDRA, TERRA, SOL bot assistants.</div>
+                    <a class="btn-open" href="interactive-bots.html" target="_blank">Open</a>
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-bottom: 25px;">
+            <h2 style="color: #00ff99; margin-bottom: 12px;">🎮 Onboarding & Entertainment – Launchpad</h2>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <div class="tool-title">🎭 Onboarding Gameshow <span class="badge">Fun</span></div>
+                    <div class="tool-desc">Interactive comedy skit + trivia gameshow experience.</div>
+                    <a class="btn-open" href="onboarding-gameshow.html" target="_blank">Open</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-title">🎥 Startup Skit Video <span class="badge">Fun</span></div>
+                    <div class="tool-desc">Watch the full HYDRA-TERRA introduction video.</div>
+                    <a class="btn-open" href="startup-skit.html" target="_blank">Open</a>
+                </div>
+            </div>
+        </section>
+
+        <div class="contact-info">
+            <h3>Certification & Publisher</h3>
+            <p><strong>Certificate:</strong> HYDRA-TERRA_CERTIFICATE.txt (included)</p>
+            <p><strong>ABN:</strong> 19 630 905 514</p>
+            <p><strong>Address:</strong> 62/2 Stockdale Rd, O'Connor WA 6163</p>
+            <p><strong>Phone:</strong> <a href="tel:0426398510">0426 398 510</a></p>
+            <p><strong>Email:</strong> <a href="mailto:admin@hydra-terra.com.au">admin@hydra-terra.com.au</a></p>
+            <p><strong>Website:</strong> <a href="https://www.hydra-terra.com.au" target="_blank">www.hydra-terra.com.au</a></p>
+        </div>
+
+        <div class="contact-info">
+            <h3>Hydra-Terra Landscape Solutions</h3>
+            <p><strong>ABN:</strong> 19 630 905 514</p>
+            <p><strong>Address:</strong> 62/2 Stockdale Rd, O'Connor WA 6163</p>
+            <p><strong>Phone:</strong> <a href="tel:0426398510">0426 398 510</a></p>
+            <p><strong>Email:</strong> <a href="mailto:admin@hydra-terra.com.au">admin@hydra-terra.com.au</a></p>
+            <p><strong>Website:</strong> <a href="https://www.hydra-terra.com.au" target="_blank">www.hydra-terra.com.au</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Client-side JavaScript - No server required!
+        console.log('🌍 HYDRA-TERRA 2025 WORLD - Loaded Successfully 💧');
+        
+        // Simulate bot status updates
+        setInterval(() => {
+            const timestamp = new Date().toLocaleTimeString();
+            console.log(`[${timestamp}] All bots online and operational`);
+        }, 30000);
+
+        // Add click handlers to cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('h2').textContent;
+                console.log(`Opening: ${title}`);
+                alert(`${title}\n\nThis feature is ready to be configured with your accounts and services.`);
+            });
+        });
+
+        // Add click handlers to bot cards
+        document.querySelectorAll('.bot-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const name = this.querySelector('.bot-name').textContent;
+                const role = this.querySelector('.bot-role').textContent;
+                console.log(`Bot Info: ${name} - ${role}`);
+                alert(`${name}\n${role}\n\nStatus: Online and Ready`);
+            });
+        });
+    </script>
+</body>
+</html>

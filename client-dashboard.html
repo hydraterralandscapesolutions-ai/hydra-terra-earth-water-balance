@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard - Hydra-Terra</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #001a4d 0%, #003d7a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(45, 80, 22, 0.3);
+            border-radius: 10px;
+            border-left: 5px solid #2d5016;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #00ff99;
+        }
+
+        .logo {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .tagline {
+            color: #00ccff;
+            font-size: 1.1em;
+        }
+
+        .welcome-msg {
+            color: #b0b0b0;
+            margin-top: 15px;
+            font-size: 0.95em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            background: rgba(0, 100, 200, 0.5);
+            border: 2px solid #00ccff;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .tab-btn:hover {
+            background: rgba(0, 100, 200, 0.8);
+            border-color: #00ff99;
+        }
+
+        .tab-btn.active {
+            background: #00ff99;
+            color: #001a4d;
+            border-color: #00ff99;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: rgba(0, 50, 100, 0.6);
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #00ff99;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+        }
+
+        .project-card {
+            background: rgba(0, 100, 200, 0.3);
+            border: 2px solid #00ccff;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .project-card:hover {
+            background: rgba(0, 100, 200, 0.5);
+            border-color: #00ff99;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .project-title {
+            color: #00ff99;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .status-planning {
+            background: #ff9500;
+            color: #fff;
+        }
+
+        .status-in-progress {
+            background: #00ccff;
+            color: #001a4d;
+        }
+
+        .status-completed {
+            background: #00ff99;
+            color: #001a4d;
+        }
+
+        .progress-bar {
+            background: rgba(0, 30, 60, 0.5);
+            height: 25px;
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #00ccff, #00ff99);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #001a4d;
+            font-weight: bold;
+            font-size: 0.85em;
+            transition: width 0.3s;
+        }
+
+        .project-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 15px 0;
+            color: #b0b0b0;
+        }
+
+        .detail-item {
+            background: rgba(0, 30, 60, 0.5);
+            padding: 12px;
+            border-radius: 5px;
+            border-left: 4px solid #00ccff;
+        }
+
+        .detail-label {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .detail-value {
+            color: #00ff99;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .gallery-item {
+            background: rgba(0, 100, 200, 0.3);
+            border: 2px solid #00ccff;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .gallery-item:hover {
+            border-color: #00ff99;
+            background: rgba(0, 100, 200, 0.5);
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 150px;
+            background: rgba(0, 50, 100, 0.5);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .gallery-label {
+            color: #00ff99;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .appointment-item {
+            background: rgba(0, 100, 200, 0.3);
+            border-left: 4px solid #00ccff;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .appointment-time {
+            color: #00ff99;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .appointment-details {
+            color: #b0b0b0;
+            margin-top: 8px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #00ccff;
+            color: #001a4d;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background: #00ff99;
+            transform: translateY(-2px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(0, 100, 200, 0.3);
+            border: 2px solid #00ccff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            color: #00ff99;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #999;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .project-details {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🌍 Hydra-Terra</div>
+            <h1>Your Project Dashboard</h1>
+            <div class="tagline">Earth • Water • Balance</div>
+            <div class="welcome-msg">Welcome! Track your landscaping projects in real-time</div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('overview')">📊 Overview</button>
+            <button class="tab-btn" onclick="switchTab('projects')">🏗️ Projects</button>
+            <button class="tab-btn" onclick="switchTab('appointments')">📅 Appointments</button>
+            <button class="tab-btn" onclick="switchTab('gallery')">📸 Before/After</button>
+        </div>
+
+        <!-- OVERVIEW TAB -->
+        <div id="overview" class="tab-content active">
+            <div class="section">
+                <h2>📈 Your Summary</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalProjects">3</div>
+                        <div class="stat-label">Active Projects</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="completedProjects">8</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="avgProgress">65%</div>
+                        <div class="stat-label">Avg Progress</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="nextAppointment">2d</div>
+                        <div class="stat-label">Next Appointment</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🚀 In Progress Projects</h2>
+                <div id="overviewProjects"></div>
+            </div>
+
+            <div class="section">
+                <h2>📅 Upcoming Appointments</h2>
+                <div id="upcomingAppointments"></div>
+            </div>
+        </div>
+
+        <!-- PROJECTS TAB -->
+        <div id="projects" class="tab-content">
+            <div class="section">
+                <h2>🏗️ All Projects</h2>
+                <div id="projectsList"></div>
+            </div>
+        </div>
+
+        <!-- APPOINTMENTS TAB -->
+        <div id="appointments" class="tab-content">
+            <div class="section">
+                <h2>📅 Scheduled Appointments</h2>
+                <div id="appointmentsList"></div>
+            </div>
+        </div>
+
+        <!-- GALLERY TAB -->
+        <div id="gallery" class="tab-content">
+            <div class="section">
+                <h2>📸 Project Gallery - Before & After</h2>
+                <div id="galleryContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const projects = [
+            {
+                id: 1,
+                name: 'Backyard Paradise',
+                location: '123 Green Street, Sydney',
+                status: 'In Progress',
+                progress: 65,
+                startDate: '2025-11-15',
+                estimatedCompletion: '2026-02-28',
+                description: 'Complete garden renovation with water feature',
+                crew: 'John & Team',
+                photos: ['Before', 'Initial Work', 'Foundation']
+            },
+            {
+                id: 2,
+                name: 'Commercial Landscape',
+                location: 'Business Plaza, Melbourne',
+                status: 'In Progress',
+                progress: 40,
+                startDate: '2025-12-01',
+                estimatedCompletion: '2026-03-15',
+                description: 'Corporate garden installation',
+                crew: 'Sarah & Team',
+                photos: ['Site Plan', 'Groundwork']
+            },
+            {
+                id: 3,
+                name: 'Water Feature Install',
+                location: '456 Riverside Ave, Brisbane',
+                status: 'Planning',
+                progress: 15,
+                startDate: '2026-01-10',
+                estimatedCompletion: '2026-04-30',
+                description: 'Fountain and pond system installation',
+                crew: 'Mike & Team',
+                photos: []
+            }
+        ];
+
+        const appointments = [
+            {
+                id: 1,
+                projectName: 'Backyard Paradise',
+                date: '2026-01-05',
+                time: '09:00 AM',
+                type: 'Site Inspection',
+                crew: 'John & Team'
+            },
+            {
+                id: 2,
+                projectName: 'Commercial Landscape',
+                date: '2026-01-08',
+                time: '10:00 AM',
+                type: 'Progress Update',
+                crew: 'Sarah & Team'
+            },
+            {
+                id: 3,
+                projectName: 'Backyard Paradise',
+                date: '2026-01-12',
+                time: '02:00 PM',
+                type: 'Garden Design Review',
+                crew: 'John & Team'
+            }
+        ];
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'projects') loadProjects();
+            if (tabName === 'appointments') loadAppointments();
+            if (tabName === 'gallery') loadGallery();
+        }
+
+        function getStatusClass(status) {
+            if (status === 'Planning') return 'status-planning';
+            if (status === 'In Progress') return 'status-in-progress';
+            if (status === 'Completed') return 'status-completed';
+        }
+
+        function loadOverview() {
+            let html = '';
+            projects.filter(p => p.status !== 'Completed').slice(0, 3).forEach(project => {
+                html += `
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div class="project-title">${project.name}</div>
+                            <span class="status-badge ${getStatusClass(project.status)}">${project.status}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${project.progress}%">${project.progress}%</div>
+                        </div>
+                        <div class="project-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Location</div>
+                                <div class="detail-value">${project.location}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Completion Expected</div>
+                                <div class="detail-value">${new Date(project.estimatedCompletion).toLocaleDateString()}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('overviewProjects').innerHTML = html;
+
+            let apptHtml = '';
+            appointments.slice(0, 3).forEach(appt => {
+                apptHtml += `
+                    <div class="appointment-item">
+                        <div class="appointment-time">📅 ${appt.date} at ${appt.time}</div>
+                        <div class="appointment-details"><strong>${appt.projectName}</strong> - ${appt.type}</div>
+                        <div class="appointment-details">Crew: ${appt.crew}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('upcomingAppointments').innerHTML = apptHtml;
+        }
+
+        function loadProjects() {
+            let html = '';
+            projects.forEach(project => {
+                html += `
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div class="project-title">${project.name}</div>
+                            <span class="status-badge ${getStatusClass(project.status)}">${project.status}</span>
+                        </div>
+                        <p style="color: #999; margin-bottom: 10px;">${project.description}</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${project.progress}%">${project.progress}%</div>
+                        </div>
+                        <div class="project-details">
+                            <div class="detail-item">
+                                <div class="detail-label">📍 Location</div>
+                                <div class="detail-value">${project.location}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">👥 Crew Lead</div>
+                                <div class="detail-value">${project.crew}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">📅 Start Date</div>
+                                <div class="detail-value">${new Date(project.startDate).toLocaleDateString()}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">🏁 Est. Completion</div>
+                                <div class="detail-value">${new Date(project.estimatedCompletion).toLocaleDateString()}</div>
+                            </div>
+                        </div>
+                        <button class="btn" onclick="viewDetails(${project.id})">View Details</button>
+                        <button class="btn" onclick="contactTeam(${project.id})">📞 Contact Team</button>
+                    </div>
+                `;
+            });
+            document.getElementById('projectsList').innerHTML = html;
+        }
+
+        function loadAppointments() {
+            let html = '';
+            appointments.forEach(appt => {
+                html += `
+                    <div class="appointment-item">
+                        <div class="appointment-time">📅 ${appt.date} at ${appt.time}</div>
+                        <div class="appointment-details"><strong>${appt.projectName}</strong></div>
+                        <div class="appointment-details">Type: ${appt.type}</div>
+                        <div class="appointment-details">Crew: ${appt.crew}</div>
+                        <button class="btn" onclick="confirmAppointment(${appt.id})">✓ Confirm</button>
+                        <button class="btn" onclick="reschedule(${appt.id})">📅 Reschedule</button>
+                    </div>
+                `;
+            });
+            document.getElementById('appointmentsList').innerHTML = html;
+        }
+
+        function loadGallery() {
+            let html = '';
+            projects.forEach(project => {
+                html += `<h3 style="color: #00ff99; margin-top: 30px; margin-bottom: 15px;">${project.name}</h3>`;
+                if (project.photos.length > 0) {
+                    html += '<div class="gallery">';
+                    project.photos.forEach((photo, idx) => {
+                        html += `
+                            <div class="gallery-item">
+                                <div class="gallery-img">📷</div>
+                                <div class="gallery-label">${photo}</div>
+                                <button class="btn" style="padding: 5px 10px; font-size: 0.85em; margin-top: 5px;">View</button>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                } else {
+                    html += '<p style="color: #999;">No photos yet</p>';
+                }
+            });
+            document.getElementById('galleryContent').innerHTML = html;
+        }
+
+        function viewDetails(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            alert(`📋 Project Details\n\n${project.name}\n${project.description}\n\nProgress: ${project.progress}%\nCompletion: ${new Date(project.estimatedCompletion).toLocaleDateString()}`);
+        }
+
+        function contactTeam(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            alert(`📞 Contact Info\n\nProject: ${project.name}\nCrew: ${project.crew}\n\nEmail: crew@hydra-terra.com\nPhone: 0426 398 510`);
+        }
+
+        function confirmAppointment(apptId) {
+            alert('✓ Appointment confirmed!');
+        }
+
+        function reschedule(apptId) {
+            alert('📅 Rescheduling feature coming soon!');
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            loadOverview();
+        });
+    </script>
+</body>
+</html>

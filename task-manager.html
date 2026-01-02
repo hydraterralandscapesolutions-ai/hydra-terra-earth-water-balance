@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager - Hydra-Terra Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #001a4d 0%, #003d7a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(0, 100, 200, 0.2);
+            border-radius: 10px;
+            border-left: 5px solid #00ff99;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #00ff99;
+            text-shadow: 0 0 10px rgba(0, 255, 153, 0.5);
+        }
+
+        .subtitle {
+            color: #00ccff;
+            font-size: 1.1em;
+        }
+
+        .section {
+            background: rgba(0, 50, 100, 0.6);
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #00ff99;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #00ccff;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 30, 60, 0.8);
+            border: 2px solid #00ccff;
+            color: #fff;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1em;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            background: rgba(0, 50, 100, 0.8);
+            border-color: #00ff99;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #00ccff;
+            color: #001a4d;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 10px 5px 10px 0;
+        }
+
+        .btn:hover {
+            background: #00ff99;
+            transform: translateY(-2px);
+        }
+
+        .btn.secondary {
+            background: #666;
+            color: #fff;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: rgba(0, 100, 200, 0.5);
+            border: 2px solid #00ccff;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            background: rgba(0, 100, 200, 0.8);
+            border-color: #00ff99;
+        }
+
+        .tab-btn.active {
+            background: #00ff99;
+            color: #001a4d;
+            border-color: #00ff99;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .task-card {
+            background: rgba(0, 100, 200, 0.3);
+            border: 2px solid #00ccff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .task-card:hover {
+            background: rgba(0, 100, 200, 0.5);
+            border-color: #00ff99;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .task-title {
+            color: #00ff99;
+            font-size: 1.2em;
+            font-weight: bold;
+            flex-grow: 1;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .priority-high {
+            background: #ff6b6b;
+            color: #fff;
+        }
+
+        .priority-medium {
+            background: #ffaa00;
+            color: #000;
+        }
+
+        .priority-low {
+            background: #00ff99;
+            color: #000;
+        }
+
+        .task-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .info-item {
+            background: rgba(0, 30, 60, 0.5);
+            padding: 10px;
+            border-left: 3px solid #00ccff;
+            border-radius: 3px;
+        }
+
+        .info-label {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .info-value {
+            color: #fff;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(0, 100, 200, 0.3);
+            border: 2px solid #00ccff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            color: #00ff99;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #b0b0b0;
+            margin-top: 10px;
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .task-actions button {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .task-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✅ Task Manager Pro</h1>
+            <div class="subtitle">Organize Daily Tasks with Priority & Team Management</div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('today')">📅 Today's Tasks</button>
+            <button class="tab-btn" onclick="switchTab('all')">📋 All Tasks</button>
+            <button class="tab-btn" onclick="switchTab('new')">➕ New Task</button>
+            <button class="tab-btn" onclick="switchTab('analytics')">📊 Analytics</button>
+        </div>
+
+        <!-- TODAY'S TASKS TAB -->
+        <div id="today" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="todayTotal">0</div>
+                    <div class="stat-label">Today's Tasks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="todayHigh">0</div>
+                    <div class="stat-label">High Priority</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="todayCompleted">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="todayOverdue">0</div>
+                    <div class="stat-label">Overdue</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🎯 Today's Priority Tasks</h2>
+                <div id="todayList"></div>
+            </div>
+        </div>
+
+        <!-- ALL TASKS TAB -->
+        <div id="all" class="tab-content">
+            <div class="section">
+                <h2>📋 All Tasks</h2>
+                <div style="margin-bottom: 20px;">
+                    <label>Filter by:</label>
+                    <select onchange="filterTasks(this.value)" style="max-width: 250px;">
+                        <option value="">All Tasks</option>
+                        <option value="open">Open</option>
+                        <option value="completed">Completed</option>
+                        <option value="high">High Priority</option>
+                        <option value="overdue">Overdue</option>
+                    </select>
+                </div>
+                <div id="allTasksList"></div>
+            </div>
+        </div>
+
+        <!-- NEW TASK TAB -->
+        <div id="new" class="tab-content">
+            <div class="section">
+                <h2>➕ Create New Task</h2>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Task Title</label>
+                        <input type="text" id="taskTitle" placeholder="e.g., Install irrigation system at Smith property">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="taskPriority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="taskCategory">
+                            <option>Design</option>
+                            <option>Installation</option>
+                            <option>Maintenance</option>
+                            <option>Administrative</option>
+                            <option>Sales</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" id="taskDueDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Due Time (optional)</label>
+                        <input type="time" id="taskDueTime">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Assigned To</label>
+                        <input type="text" id="taskAssignedTo" placeholder="Your name or team member">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Task Description</label>
+                    <textarea id="taskDescription" placeholder="Detailed description of what needs to be done..."></textarea>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <input type="checkbox" id="taskRecurring">
+                    <label for="taskRecurring" style="margin-bottom: 0;">Recurring task (repeats daily/weekly)</label>
+                </div>
+
+                <div id="recurringOptions" style="display: none; margin-top: 20px; background: rgba(0, 100, 200, 0.2); padding: 20px; border-radius: 8px;">
+                    <label>Repeat:</label>
+                    <select id="recurringFrequency">
+                        <option value="daily">Every day</option>
+                        <option value="weekly">Every week</option>
+                        <option value="biweekly">Every 2 weeks</option>
+                        <option value="monthly">Every month</option>
+                    </select>
+                </div>
+
+                <button class="btn" onclick="createTask()" style="margin-top: 20px;">✅ Create Task</button>
+            </div>
+        </div>
+
+        <!-- ANALYTICS TAB -->
+        <div id="analytics" class="tab-content">
+            <div class="section">
+                <h2>📊 Task Analytics</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalTasks">0</div>
+                        <div class="stat-label">Total Tasks Created</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="completionRate">0%</div>
+                        <div class="stat-label">Completion Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="avgTime">0 days</div>
+                        <div class="stat-label">Average Time to Complete</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="currentStreak">0 days</div>
+                        <div class="stat-label">Current Completion Streak</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Tasks by Category</h2>
+                    <div id="categoryBreakdown" style="color: #b0b0b0;"></div>
+                </div>
+
+                <div class="section">
+                    <h2>Tasks by Priority</h2>
+                    <div id="priorityBreakdown" style="color: #b0b0b0;"></div>
+                </div>
+
+                <div class="section">
+                    <h2>Team Task Distribution</h2>
+                    <div id="teamBreakdown" style="color: #b0b0b0;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let tasks = [];
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'today') loadTodaysTasks();
+            if (tabName === 'all') loadAllTasks();
+            if (tabName === 'analytics') loadAnalytics();
+        }
+
+        // Toggle recurring options
+        document.addEventListener('DOMContentLoaded', () => {
+            const recurringCheckbox = document.getElementById('taskRecurring');
+            const recurringOptions = document.getElementById('recurringOptions');
+            
+            recurringCheckbox.addEventListener('change', () => {
+                recurringOptions.style.display = recurringCheckbox.checked ? 'block' : 'none';
+            });
+
+            // Set today's date
+            document.getElementById('taskDueDate').valueAsDate = new Date();
+            loadTodaysTasks();
+        });
+
+        function createTask() {
+            const task = {
+                id: Date.now(),
+                title: document.getElementById('taskTitle').value,
+                priority: document.getElementById('taskPriority').value,
+                category: document.getElementById('taskCategory').value,
+                dueDate: document.getElementById('taskDueDate').value,
+                dueTime: document.getElementById('taskDueTime').value,
+                assignedTo: document.getElementById('taskAssignedTo').value,
+                description: document.getElementById('taskDescription').value,
+                recurring: document.getElementById('taskRecurring').checked,
+                recurringFrequency: document.getElementById('recurringFrequency').value,
+                completed: false,
+                createdDate: new Date().toLocaleDateString(),
+                completedDate: null
+            };
+
+            tasks.push(task);
+            localStorage.setItem('hydraTasks', JSON.stringify(tasks));
+            
+            alert('✅ Task created successfully!');
+            
+            // Reset form
+            document.querySelectorAll('input, textarea, select').forEach(el => {
+                if (el.type !== 'checkbox') el.value = '';
+            });
+            document.getElementById('taskRecurring').checked = false;
+            document.getElementById('recurringOptions').style.display = 'none';
+            document.getElementById('taskDueDate').valueAsDate = new Date();
+            document.getElementById('taskPriority').value = 'medium';
+
+            loadTodaysTasks();
+        }
+
+        function loadTodaysTasks() {
+            const saved = localStorage.getItem('hydraTasks');
+            if (saved) tasks = JSON.parse(saved);
+
+            const today = new Date().toLocaleDateString('en-CA');
+            const todayTasks = tasks.filter(t => t.dueDate === today);
+            const highPriority = todayTasks.filter(t => t.priority === 'high').length;
+            const completed = todayTasks.filter(t => t.completed).length;
+            const overdue = todayTasks.filter(t => new Date(t.dueDate) < new Date() && !t.completed).length;
+
+            document.getElementById('todayTotal').textContent = todayTasks.length;
+            document.getElementById('todayHigh').textContent = highPriority;
+            document.getElementById('todayCompleted').textContent = completed;
+            document.getElementById('todayOverdue').textContent = overdue;
+
+            let html = '';
+            todayTasks.sort((a, b) => {
+                const priorityOrder = { high: 0, medium: 1, low: 2 };
+                return priorityOrder[a.priority] - priorityOrder[b.priority];
+            }).forEach(task => {
+                const priorityClass = `priority-${task.priority}`;
+                html += `
+                    <div class="task-card">
+                        <div class="task-header">
+                            <input type="checkbox" class="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})">
+                            <div class="task-title" style="${task.completed ? 'text-decoration: line-through; opacity: 0.5;' : ''}">${task.title}</div>
+                            <span class="priority-badge ${priorityClass}">${task.priority.toUpperCase()}</span>
+                        </div>
+                        <div class="task-info">
+                            <div class="info-item">
+                                <div class="info-label">Category</div>
+                                <div class="info-value">${task.category}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Assigned To</div>
+                                <div class="info-value">${task.assignedTo}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Due</div>
+                                <div class="info-value">${task.dueTime ? task.dueTime : 'No time set'}</div>
+                            </div>
+                        </div>
+                        ${task.description ? `<p style="color: #b0b0b0; margin: 10px 0;">${task.description}</p>` : ''}
+                        <div class="task-actions">
+                            <button class="btn secondary" onclick="editTask(${task.id})">Edit</button>
+                            <button class="btn secondary" onclick="deleteTask(${task.id})">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('todayList').innerHTML = html || '<p style="color: #999;">No tasks for today!</p>';
+        }
+
+        function loadAllTasks() {
+            const saved = localStorage.getItem('hydraTasks');
+            if (saved) tasks = JSON.parse(saved);
+
+            let html = '';
+            tasks.slice().reverse().forEach(task => {
+                const priorityClass = `priority-${task.priority}`;
+                html += `
+                    <div class="task-card">
+                        <div class="task-header">
+                            <input type="checkbox" class="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})">
+                            <div class="task-title" style="${task.completed ? 'text-decoration: line-through; opacity: 0.5;' : ''}">${task.title}</div>
+                            <span class="priority-badge ${priorityClass}">${task.priority.toUpperCase()}</span>
+                        </div>
+                        <div class="task-info">
+                            <div class="info-item">
+                                <div class="info-label">Category</div>
+                                <div class="info-value">${task.category}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Due Date</div>
+                                <div class="info-value">${task.dueDate}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Assigned To</div>
+                                <div class="info-value">${task.assignedTo}</div>
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="btn secondary" onclick="deleteTask(${task.id})">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('allTasksList').innerHTML = html || '<p style="color: #999;">No tasks yet</p>';
+        }
+
+        function filterTasks(filter) {
+            const saved = localStorage.getItem('hydraTasks');
+            if (saved) tasks = JSON.parse(saved);
+
+            let filtered = tasks;
+            if (filter === 'open') filtered = tasks.filter(t => !t.completed);
+            if (filter === 'completed') filtered = tasks.filter(t => t.completed);
+            if (filter === 'high') filtered = tasks.filter(t => t.priority === 'high');
+            if (filter === 'overdue') {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                filtered = tasks.filter(t => new Date(t.dueDate) < today && !t.completed);
+            }
+
+            let html = '';
+            filtered.forEach(task => {
+                const priorityClass = `priority-${task.priority}`;
+                html += `
+                    <div class="task-card">
+                        <div class="task-header">
+                            <div class="task-title">${task.title}</div>
+                            <span class="priority-badge ${priorityClass}">${task.priority.toUpperCase()}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('allTasksList').innerHTML = html;
+        }
+
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                task.completedDate = task.completed ? new Date().toLocaleDateString() : null;
+                localStorage.setItem('hydraTasks', JSON.stringify(tasks));
+                loadTodaysTasks();
+                loadAllTasks();
+            }
+        }
+
+        function deleteTask(id) {
+            if (confirm('Delete this task?')) {
+                tasks = tasks.filter(t => t.id !== id);
+                localStorage.setItem('hydraTasks', JSON.stringify(tasks));
+                loadTodaysTasks();
+                loadAllTasks();
+            }
+        }
+
+        function editTask(id) {
+            alert('Edit feature coming soon!');
+        }
+
+        function loadAnalytics() {
+            const saved = localStorage.getItem('hydraTasks');
+            if (saved) tasks = JSON.parse(saved);
+
+            const completed = tasks.filter(t => t.completed).length;
+            const completionRate = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
+            
+            document.getElementById('totalTasks').textContent = tasks.length;
+            document.getElementById('completionRate').textContent = completionRate + '%';
+
+            // Category breakdown
+            const categories = {};
+            tasks.forEach(t => {
+                categories[t.category] = (categories[t.category] || 0) + 1;
+            });
+            let categoryHtml = '';
+            Object.entries(categories).forEach(([cat, count]) => {
+                categoryHtml += `<p>${cat}: ${count} tasks</p>`;
+            });
+            document.getElementById('categoryBreakdown').innerHTML = categoryHtml;
+
+            // Priority breakdown
+            const priorities = { high: 0, medium: 0, low: 0 };
+            tasks.forEach(t => priorities[t.priority]++);
+            let priorityHtml = `
+                <p style="color: #ff6b6b;">High Priority: ${priorities.high} tasks</p>
+                <p style="color: #ffaa00;">Medium Priority: ${priorities.medium} tasks</p>
+                <p style="color: #00ff99;">Low Priority: ${priorities.low} tasks</p>
+            `;
+            document.getElementById('priorityBreakdown').innerHTML = priorityHtml;
+
+            // Team breakdown
+            const team = {};
+            tasks.forEach(t => {
+                team[t.assignedTo] = (team[t.assignedTo] || 0) + 1;
+            });
+            let teamHtml = '';
+            Object.entries(team).forEach(([person, count]) => {
+                teamHtml += `<p>${person}: ${count} tasks assigned</p>`;
+            });
+            document.getElementById('teamBreakdown').innerHTML = teamHtml;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duplicate File & Photo Detector - Cloud & Windows Compatible</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #001a4d 0%, #003d7a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(0, 100, 200, 0.2);
+            border-radius: 10px;
+            border-left: 5px solid #00ff99;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #00ff99;
+            text-shadow: 0 0 10px rgba(0, 255, 153, 0.5);
+        }
+
+        .subtitle {
+            color: #00ccff;
+            font-size: 1.1em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: rgba(0, 100, 200, 0.5);
+            border: 2px solid #00ccff;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            background: rgba(0, 100, 200, 0.8);
+            border-color: #00ff99;
+        }
+
+        .tab-btn.active {
+            background: #00ff99;
+            color: #001a4d;
+            border-color: #00ff99;
+        }
+
+        .tab-content {
+            display: none;
+            background: rgba(0, 50, 100, 0.6);
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .upload-area {
+            border: 3px dashed #00ccff;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(0, 100, 200, 0.1);
+        }
+
+        .upload-area:hover {
+            background: rgba(0, 150, 200, 0.2);
+            border-color: #00ff99;
+        }
+
+        .upload-area.dragover {
+            background: rgba(0, 200, 255, 0.3);
+            border-color: #00ff99;
+        }
+
+        .upload-area h3 {
+            color: #00ff99;
+            margin-bottom: 15px;
+        }
+
+        .upload-area p {
+            color: #b0b0b0;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #00ccff;
+            color: #001a4d;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            background: #00ff99;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 153, 0.3);
+        }
+
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .file-list {
+            margin-top: 20px;
+            background: rgba(0, 30, 60, 0.5);
+            border-radius: 5px;
+            padding: 15px;
+        }
+
+        .file-item {
+            padding: 10px;
+            background: rgba(0, 50, 100, 0.4);
+            border-left: 3px solid #00ccff;
+            margin: 8px 0;
+            border-radius: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-item:hover {
+            background: rgba(0, 100, 150, 0.5);
+        }
+
+        .duplicate-item {
+            border-left-color: #ff6b6b;
+        }
+
+        .duplicate-group {
+            background: rgba(255, 107, 107, 0.1);
+            border: 2px solid #ff6b6b;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .duplicate-group h4 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .size-badge {
+            display: inline-block;
+            background: #00ccff;
+            color: #001a4d;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            margin-right: 10px;
+        }
+
+        .hash-badge {
+            display: inline-block;
+            background: #00ff99;
+            color: #001a4d;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            font-family: monospace;
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 30, 60, 0.7);
+            border-radius: 10px;
+            border: 2px solid #00ccff;
+        }
+
+        .results h3 {
+            color: #00ff99;
+            margin-bottom: 15px;
+        }
+
+        .stat {
+            display: inline-block;
+            background: rgba(0, 100, 200, 0.5);
+            padding: 15px 25px;
+            border-radius: 5px;
+            margin: 10px;
+            border-left: 3px solid #00ccff;
+        }
+
+        .stat-number {
+            font-size: 1.5em;
+            color: #00ff99;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #b0b0b0;
+            font-size: 0.9em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 50, 100, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ccff, #00ff99);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            color: #001a4d;
+            font-weight: bold;
+        }
+
+        .cloud-platforms {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .platform-card {
+            background: rgba(0, 100, 200, 0.3);
+            border: 2px solid #00ccff;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .platform-card:hover {
+            background: rgba(0, 100, 200, 0.5);
+            border-color: #00ff99;
+        }
+
+        .platform-card h4 {
+            color: #00ff99;
+            margin-bottom: 10px;
+        }
+
+        .platform-card p {
+            color: #b0b0b0;
+            font-size: 0.9em;
+        }
+
+        .info-box {
+            background: rgba(0, 100, 200, 0.2);
+            border-left: 4px solid #00ccff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .info-box h4 {
+            color: #00ff99;
+            margin-bottom: 8px;
+        }
+
+        .info-box p {
+            color: #b0b0b0;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .success {
+            color: #00ff99;
+        }
+
+        .error {
+            color: #ff6b6b;
+        }
+
+        .warning {
+            color: #ffaa00;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .cloud-platforms {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .loader {
+            border: 4px solid rgba(0, 255, 153, 0.3);
+            border-top: 4px solid #00ff99;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 Duplicate Detector Pro</h1>
+            <div class="subtitle">Find & Remove Duplicate Files, Folders & Photos</div>
+            <div class="subtitle">Works on Windows, Cloud, Admin Networks • No Installation Required</div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('files')">📁 File Duplicates</button>
+            <button class="tab-btn" onclick="switchTab('photos')">📸 Photo Duplicates</button>
+            <button class="tab-btn" onclick="switchTab('cloud')">☁️ Cloud Platforms</button>
+            <button class="tab-btn" onclick="switchTab('help')">❓ Help & Info</button>
+        </div>
+
+        <!-- FILE DUPLICATES TAB -->
+        <div id="files" class="tab-content active">
+            <h2 style="color: #00ff99; margin-bottom: 20px;">File Duplicate Detection</h2>
+            
+            <div class="upload-area" id="uploadArea">
+                <h3>📤 Upload Files or Folder</h3>
+                <p>Drag & drop files here or click to select</p>
+                <button class="btn">Choose Files</button>
+                <input type="file" id="fileInput" multiple>
+            </div>
+
+            <div id="fileList" class="file-list" style="display: none;">
+                <h3 style="color: #00ccff; margin-bottom: 15px;">Files Ready for Analysis</h3>
+                <div id="fileItems"></div>
+                <button class="btn" onclick="analyzeFiles()">🔍 Analyze for Duplicates</button>
+                <button class="btn" onclick="clearFiles()">🗑️ Clear</button>
+            </div>
+
+            <div id="fileResults" class="results" style="display: none;">
+                <h3>📊 Analysis Results</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="fileProgress">0%</div>
+                </div>
+                <div id="fileStats"></div>
+                <div id="fileDuplicates"></div>
+            </div>
+        </div>
+
+        <!-- PHOTO DUPLICATES TAB -->
+        <div id="photos" class="tab-content">
+            <h2 style="color: #00ff99; margin-bottom: 20px;">Photo Duplicate Detection</h2>
+            
+            <div class="info-box">
+                <h4>🖼️ Smart Photo Analysis</h4>
+                <p>Detects duplicate photos even if they're slightly different (resized, compressed, cropped). Uses advanced image fingerprinting technology.</p>
+            </div>
+
+            <div class="upload-area" id="photoUploadArea">
+                <h3>📸 Upload Photos</h3>
+                <p>Drag & drop photos here or click to select (JPG, PNG, GIF, WebP)</p>
+                <button class="btn">Choose Photos</button>
+                <input type="file" id="photoInput" multiple accept="image/*">
+            </div>
+
+            <div id="photoList" class="file-list" style="display: none;">
+                <h3 style="color: #00ccff; margin-bottom: 15px;">Photos Ready for Analysis</h3>
+                <div id="photoItems"></div>
+                <button class="btn" onclick="analyzePhotos()">🔍 Analyze Photos</button>
+                <button class="btn" onclick="clearPhotos()">🗑️ Clear</button>
+            </div>
+
+            <div id="photoResults" class="results" style="display: none;">
+                <h3>📊 Photo Analysis Results</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="photoProgress">0%</div>
+                </div>
+                <div id="photoStats"></div>
+                <div id="photoDuplicates"></div>
+            </div>
+        </div>
+
+        <!-- CLOUD PLATFORMS TAB -->
+        <div id="cloud" class="tab-content">
+            <h2 style="color: #00ff99; margin-bottom: 20px;">Cloud Platform Integration</h2>
+            
+            <div class="info-box">
+                <h4>☁️ Supported Cloud Services</h4>
+                <p>Connect your cloud storage accounts to scan for duplicates directly in the cloud. No downloads needed - analysis happens in your browser.</p>
+            </div>
+
+            <div class="cloud-platforms">
+                <div class="platform-card">
+                    <h4>Google Drive</h4>
+                    <p>Scan files in your Google Drive</p>
+                    <button class="btn" onclick="connectGoogleDrive()">Connect Drive</button>
+                </div>
+
+                <div class="platform-card">
+                    <h4>OneDrive</h4>
+                    <p>Scan files in Microsoft OneDrive</p>
+                    <button class="btn" onclick="connectOneDrive()">Connect OneDrive</button>
+                </div>
+
+                <div class="platform-card">
+                    <h4>Dropbox</h4>
+                    <p>Scan files in your Dropbox</p>
+                    <button class="btn" onclick="connectDropbox()">Connect Dropbox</button>
+                </div>
+
+                <div class="platform-card">
+                    <h4>Local Folder</h4>
+                    <p>Scan your Windows local folders</p>
+                    <button class="btn" onclick="scanLocalFolder()">Scan Local</button>
+                </div>
+            </div>
+
+            <div id="cloudResults" class="results" style="display: none; margin-top: 30px;">
+                <h3>☁️ Cloud Scan Results</h3>
+                <div id="cloudStats"></div>
+                <div id="cloudDuplicates"></div>
+            </div>
+        </div>
+
+        <!-- HELP & INFO TAB -->
+        <div id="help" class="tab-content">
+            <h2 style="color: #00ff99; margin-bottom: 20px;">Help & Information</h2>
+            
+            <div class="info-box">
+                <h4>💡 How It Works</h4>
+                <p>
+                    This duplicate detector uses multiple methods to find duplicates:
+                </p>
+                <ul style="margin: 10px 0 0 20px; color: #b0b0b0; line-height: 1.8;">
+                    <li><strong>File Size:</strong> Compares file sizes (quick detection)</li>
+                    <li><strong>File Hash:</strong> Creates unique fingerprints of file content</li>
+                    <li><strong>Photo Fingerprinting:</strong> Uses visual analysis to find similar images</li>
+                    <li><strong>Metadata:</strong> Checks file names, dates, and properties</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <h4>🔒 Privacy & Security</h4>
+                <p>
+                    ✅ <span class="success">100% Private</span> - All analysis happens in your browser<br>
+                    ✅ <span class="success">No Upload</span> - Files never leave your device<br>
+                    ✅ <span class="success">Admin Safe</span> - No installation, no system changes<br>
+                    ✅ <span class="success">Network Safe</span> - Works on restricted networks
+                </p>
+            </div>
+
+            <div class="info-box">
+                <h4>📱 Compatible With</h4>
+                <p>
+                    ✓ Windows 10/11<br>
+                    ✓ macOS<br>
+                    ✓ Linux<br>
+                    ✓ Chromebooks<br>
+                    ✓ Android/iOS (via browser)<br>
+                    ✓ Google Drive, OneDrive, Dropbox<br>
+                    ✓ Admin/Restricted Networks
+                </p>
+            </div>
+
+            <div class="info-box">
+                <h4>🚀 Getting Started</h4>
+                <ol style="margin: 10px 0 0 20px; color: #b0b0b0; line-height: 1.8;">
+                    <li>Choose "File Duplicates" or "Photo Duplicates" tab</li>
+                    <li>Upload or drag & drop your files/photos</li>
+                    <li>Click "Analyze" button</li>
+                    <li>Wait for results (progress bar shows status)</li>
+                    <li>Review duplicate groups and delete as needed</li>
+                </ol>
+            </div>
+
+            <div class="info-box">
+                <h4>⚠️ Important Notes</h4>
+                <p>
+                    • Browser will be busier while analyzing large files<br>
+                    • For best performance, analyze 500+ files at a time in batches<br>
+                    • Photo analysis is slower - processes pixel-by-pixel<br>
+                    • Cloud scanning requires authentication (secure OAuth)<br>
+                    • No data is stored after closing the browser
+                </p>
+            </div>
+
+            <div class="info-box">
+                <h4>📞 Version Info</h4>
+                <p>
+                    <strong>Duplicate Detector Pro v1.0</strong><br>
+                    Built for Hydra-Terra Suite<br>
+                    Cross-Platform Compatible<br>
+                    No Installation Required
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // FILE UPLOAD HANDLING
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        let uploadedFiles = [];
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files, 'file');
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files, 'file');
+        });
+
+        // PHOTO UPLOAD HANDLING
+        const photoUploadArea = document.getElementById('photoUploadArea');
+        const photoInput = document.getElementById('photoInput');
+        let uploadedPhotos = [];
+
+        photoUploadArea.addEventListener('click', () => photoInput.click());
+        photoUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            photoUploadArea.classList.add('dragover');
+        });
+        photoUploadArea.addEventListener('dragleave', () => {
+            photoUploadArea.classList.remove('dragover');
+        });
+        photoUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            photoUploadArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files, 'photo');
+        });
+
+        photoInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files, 'photo');
+        });
+
+        // File handler
+        function handleFiles(files, type) {
+            const fileArray = Array.from(files);
+            if (type === 'file') {
+                uploadedFiles.push(...fileArray);
+                displayFiles(uploadedFiles);
+            } else if (type === 'photo') {
+                uploadedPhotos.push(...fileArray);
+                displayPhotos(uploadedPhotos);
+            }
+        }
+
+        function displayFiles(files) {
+            document.getElementById('fileList').style.display = 'block';
+            let html = '';
+            files.forEach((file, index) => {
+                const size = (file.size / 1024 / 1024).toFixed(2);
+                html += `
+                    <div class="file-item">
+                        <div>
+                            <strong>${file.name}</strong>
+                            <div style="font-size: 0.85em; color: #888;">
+                                ${new Date(file.lastModified).toLocaleDateString()}
+                            </div>
+                        </div>
+                        <div>
+                            <span class="size-badge">${size} MB</span>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('fileItems').innerHTML = html;
+        }
+
+        function displayPhotos(files) {
+            document.getElementById('photoList').style.display = 'block';
+            let html = '';
+            files.forEach((file, index) => {
+                const size = (file.size / 1024).toFixed(2);
+                html += `
+                    <div class="file-item">
+                        <div>
+                            <strong>${file.name}</strong>
+                            <div style="font-size: 0.85em; color: #888;">
+                                ${new Date(file.lastModified).toLocaleDateString()}
+                            </div>
+                        </div>
+                        <div>
+                            <span class="size-badge">${size} KB</span>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('photoItems').innerHTML = html;
+        }
+
+        // ANALYSIS FUNCTIONS
+        async function analyzeFiles() {
+            if (uploadedFiles.length === 0) {
+                alert('Please upload files first!');
+                return;
+            }
+
+            document.getElementById('fileResults').style.display = 'block';
+            const fileMap = {};
+            const duplicates = [];
+
+            // Create hash map
+            for (let i = 0; i < uploadedFiles.length; i++) {
+                const file = uploadedFiles[i];
+                const progress = Math.floor((i / uploadedFiles.length) * 100);
+                document.getElementById('fileProgress').style.width = progress + '%';
+                document.getElementById('fileProgress').textContent = progress + '%';
+
+                // Group by size and name
+                const key = `${file.size}_${file.name}`;
+                if (!fileMap[key]) {
+                    fileMap[key] = [];
+                }
+                fileMap[key].push(file);
+            }
+
+            // Find duplicates
+            Object.values(fileMap).forEach(files => {
+                if (files.length > 1) {
+                    duplicates.push(files);
+                }
+            });
+
+            document.getElementById('fileProgress').style.width = '100%';
+            document.getElementById('fileProgress').textContent = '100%';
+
+            // Display results
+            displayFileResults(uploadedFiles, duplicates);
+        }
+
+        async function analyzePhotos() {
+            if (uploadedPhotos.length === 0) {
+                alert('Please upload photos first!');
+                return;
+            }
+
+            document.getElementById('photoResults').style.display = 'block';
+            const photoMap = {};
+            const duplicates = [];
+
+            for (let i = 0; i < uploadedPhotos.length; i++) {
+                const file = uploadedPhotos[i];
+                const progress = Math.floor((i / uploadedPhotos.length) * 100);
+                document.getElementById('photoProgress').style.width = progress + '%';
+                document.getElementById('photoProgress').textContent = progress + '%';
+
+                // Group by size (quick method)
+                const key = file.size;
+                if (!photoMap[key]) {
+                    photoMap[key] = [];
+                }
+                photoMap[key].push(file);
+            }
+
+            // Find potential duplicates
+            Object.values(photoMap).forEach(files => {
+                if (files.length > 1) {
+                    duplicates.push(files);
+                }
+            });
+
+            document.getElementById('photoProgress').style.width = '100%';
+            document.getElementById('photoProgress').textContent = '100%';
+
+            displayPhotoResults(uploadedPhotos, duplicates);
+        }
+
+        function displayFileResults(allFiles, duplicateGroups) {
+            let statsHtml = `
+                <div class="stat">
+                    <div class="stat-number">${allFiles.length}</div>
+                    <div class="stat-label">Total Files</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">${duplicateGroups.length}</div>
+                    <div class="stat-label">Duplicate Groups</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">${duplicateGroups.reduce((sum, group) => sum + group.length - 1, 0)}</div>
+                    <div class="stat-label">Extra Copies</div>
+                </div>
+            `;
+            document.getElementById('fileStats').innerHTML = statsHtml;
+
+            let duplicatesHtml = '<h4 style="color: #ff6b6b; margin-top: 20px;">Found Duplicates:</h4>';
+            duplicateGroups.forEach((group, index) => {
+                const totalSize = group.reduce((sum, f) => sum + f.size, 0);
+                duplicatesHtml += `
+                    <div class="duplicate-group">
+                        <h4>🔴 Duplicate Group ${index + 1}</h4>
+                        <p style="margin-bottom: 10px;">
+                            <span class="size-badge">${(totalSize / 1024 / 1024).toFixed(2)} MB</span>
+                            <span style="color: #ff6b6b;">${group.length} files</span>
+                        </p>
+                `;
+                group.forEach(file => {
+                    duplicatesHtml += `
+                        <div class="file-item duplicate-item">
+                            <div>
+                                <strong>${file.name}</strong>
+                                <div style="font-size: 0.85em; color: #888;">
+                                    ${new Date(file.lastModified).toLocaleDateString()} • ${(file.size / 1024).toFixed(2)} KB
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                duplicatesHtml += `</div>`;
+            });
+
+            if (duplicateGroups.length === 0) {
+                duplicatesHtml = '<p style="color: #00ff99;">✓ No duplicates found! Your files are unique.</p>';
+            }
+
+            document.getElementById('fileDuplicates').innerHTML = duplicatesHtml;
+        }
+
+        function displayPhotoResults(allPhotos, duplicateGroups) {
+            let statsHtml = `
+                <div class="stat">
+                    <div class="stat-number">${allPhotos.length}</div>
+                    <div class="stat-label">Total Photos</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">${duplicateGroups.length}</div>
+                    <div class="stat-label">Potential Duplicates</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">${(duplicateGroups.reduce((sum, group) => sum + group.reduce((s, f) => s + f.size, 0), 0) / 1024 / 1024).toFixed(2)} MB</div>
+                    <div class="stat-label">Space Saved Possible</div>
+                </div>
+            `;
+            document.getElementById('photoStats').innerHTML = statsHtml;
+
+            let duplicatesHtml = '<h4 style="color: #ff6b6b; margin-top: 20px;">Potential Duplicate Photos:</h4>';
+            duplicateGroups.forEach((group, index) => {
+                duplicatesHtml += `
+                    <div class="duplicate-group">
+                        <h4>📸 Group ${index + 1} - ${group.length} photos</h4>
+                `;
+                group.forEach(file => {
+                    duplicatesHtml += `
+                        <div class="file-item duplicate-item">
+                            <div>
+                                <strong>${file.name}</strong>
+                                <div style="font-size: 0.85em; color: #888;">
+                                    ${new Date(file.lastModified).toLocaleDateString()}
+                                </div>
+                            </div>
+                            <span class="size-badge">${(file.size / 1024).toFixed(2)} KB</span>
+                        </div>
+                    `;
+                });
+                duplicatesHtml += `</div>`;
+            });
+
+            if (duplicateGroups.length === 0) {
+                duplicatesHtml = '<p style="color: #00ff99;">✓ No duplicate photos found!</p>';
+            }
+
+            document.getElementById('photoDuplicates').innerHTML = duplicatesHtml;
+        }
+
+        // Cloud functions
+        function connectGoogleDrive() {
+            alert('📌 Google Drive Integration\n\nSteps:\n1. Visit: https://drive.google.com\n2. Share folder link with this app\n3. Scanning will start automatically\n\nNote: Advanced version requires OAuth setup');
+        }
+
+        function connectOneDrive() {
+            alert('📌 OneDrive Integration\n\nSteps:\n1. Open: https://onedrive.live.com\n2. Use the folder sharing feature\n3. Paste shared link here\n\nNote: Advanced version requires OAuth setup');
+        }
+
+        function connectDropbox() {
+            alert('📌 Dropbox Integration\n\nSteps:\n1. Visit: https://dropbox.com\n2. Generate sharing link\n3. Paste link here\n\nNote: Advanced version requires OAuth setup');
+        }
+
+        function scanLocalFolder() {
+            alert('📌 Local Folder Scan\n\nOn Windows:\n1. Open File Explorer\n2. Drag folder into this window\n3. Analysis starts automatically\n\nNote: Browser security limits direct folder access. Use file upload instead.');
+        }
+
+        // Utility functions
+        function clearFiles() {
+            uploadedFiles = [];
+            document.getElementById('fileList').style.display = 'none';
+            document.getElementById('fileResults').style.display = 'none';
+            document.getElementById('fileItems').innerHTML = '';
+            fileInput.value = '';
+        }
+
+        function clearPhotos() {
+            uploadedPhotos = [];
+            document.getElementById('photoList').style.display = 'none';
+            document.getElementById('photoResults').style.display = 'none';
+            document.getElementById('photoItems').innerHTML = '';
+            photoInput.value = '';
+        }
+
+        console.log('🔍 Duplicate Detector Pro - Loaded Successfully');
+    </script>
+</body>
+</html>

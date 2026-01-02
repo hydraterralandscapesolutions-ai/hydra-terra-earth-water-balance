@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HYDRA-TERRA 2025 - Master Control Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #001a4d 0%, #003d7a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(0, 100, 200, 0.2);
+            border-radius: 15px;
+            border: 3px solid #00ff99;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #00ff99;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 255, 153, 0.5);
+        }
+
+        .header-subtitle {
+            color: #00ccff;
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+        .header-stats {
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #b0b0b0;
+        }
+
+        .search-box {
+            max-width: 400px;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            background: rgba(0, 30, 60, 0.5);
+            border: 2px solid #00ccff;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .search-box input::placeholder {
+            color: #666;
+        }
+
+        .category-section {
+            margin-bottom: 40px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #00ccff;
+        }
+
+        .category-icon {
+            font-size: 2em;
+        }
+
+        .category-title {
+            font-size: 1.8em;
+            color: #00ff99;
+            font-weight: bold;
+        }
+
+        .category-count {
+            margin-left: auto;
+            background: rgba(0, 255, 153, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            color: #00ff99;
+            font-weight: bold;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .tool-card {
+            background: rgba(0, 50, 100, 0.6);
+            border: 2px solid #00ccff;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tool-card:hover {
+            background: rgba(0, 100, 150, 0.8);
+            border-color: #00ff99;
+            box-shadow: 0 0 20px rgba(0, 255, 153, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .tool-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .tool-name {
+            color: #00ff99;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .tool-desc {
+            color: #b0b0b0;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            flex-grow: 1;
+            line-height: 1.4;
+        }
+
+        .tool-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-bottom: 12px;
+            width: fit-content;
+        }
+
+        .badge-core {
+            background: rgba(0, 100, 200, 0.3);
+            border: 1px solid #0064C8;
+            color: #0064C8;
+        }
+
+        .badge-addon {
+            background: rgba(0, 204, 255, 0.3);
+            border: 1px solid #00CCFF;
+            color: #00CCFF;
+        }
+
+        .badge-advanced {
+            background: rgba(0, 255, 153, 0.2);
+            border: 1px solid #00ff99;
+            color: #00ff99;
+        }
+
+        .badge-fun {
+            background: rgba(45, 80, 22, 0.3);
+            border: 1px solid #2D5016;
+            color: #66BB6A;
+        }
+
+        .btn-launch {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #00ccff;
+            color: #001a4d;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s;
+            text-align: center;
+            width: 100%;
+        }
+
+        .btn-launch:hover {
+            background: #00ff99;
+            transform: translateY(-2px);
+        }
+
+        .quick-actions {
+            background: rgba(0, 50, 100, 0.4);
+            border: 2px solid #00ccff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .quick-action {
+            background: rgba(0, 100, 200, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .quick-action:hover {
+            background: rgba(0, 100, 200, 0.6);
+            border-color: #00ff99;
+        }
+
+        .quick-action-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .quick-action-text {
+            color: #00ccff;
+            font-weight: bold;
+        }
+
+        .bot-spotlight {
+            background: linear-gradient(135deg, rgba(0, 100, 200, 0.3), rgba(0, 255, 153, 0.1));
+            border: 2px solid #00ff99;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .bot-spotlight h3 {
+            color: #00ff99;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .bot-trio {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .bot-mini {
+            background: rgba(0, 30, 60, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .bot-avatar {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .bot-name {
+            color: #00ccff;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .bot-role {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌍 HYDRA-TERRA 2025 🌊</h1>
+            <div class="header-subtitle">Master Control Center</div>
+            <div class="header-subtitle">Complete Business Automation Suite</div>
+            <div class="header-stats">
+                <strong>18 Tools</strong> • <strong>3 AI Bots</strong> • <strong>Full Integration</strong>
+            </div>
+        </header>
+
+        <div class="quick-actions">
+            <div class="quick-action" onclick="location.href='startup-skit.html'">
+                <div class="quick-action-icon">🎥</div>
+                <div class="quick-action-text">Watch Intro</div>
+            </div>
+            <div class="quick-action" onclick="location.href='onboarding-gameshow.html'">
+                <div class="quick-action-icon">🎮</div>
+                <div class="quick-action-text">Play Gameshow</div>
+            </div>
+            <div class="quick-action" onclick="location.href='interactive-bots.html'">
+                <div class="quick-action-icon">💬</div>
+                <div class="quick-action-text">Chat with Bots</div>
+            </div>
+            <div class="quick-action" onclick="location.href='hydra-terra-2025-world.html'">
+                <div class="quick-action-icon">📊</div>
+                <div class="quick-action-text">Main Dashboard</div>
+            </div>
+        </div>
+
+        <div class="bot-spotlight">
+            <h3>🤖 Your AI Bot Team - Always Ready to Help</h3>
+            <div class="bot-trio">
+                <div class="bot-mini">
+                    <div class="bot-avatar">⚡</div>
+                    <div class="bot-name">HYDRA</div>
+                    <div class="bot-role">Backend Operations</div>
+                </div>
+                <div class="bot-mini">
+                    <div class="bot-avatar">🎨</div>
+                    <div class="bot-name">TERRA</div>
+                    <div class="bot-role">Frontend Design</div>
+                </div>
+                <div class="bot-mini">
+                    <div class="bot-avatar">🗓️</div>
+                    <div class="bot-name">SOL</div>
+                    <div class="bot-role">Life Balance</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CORE SUITE -->
+        <div class="category-section">
+            <div class="category-header">
+                <div class="category-icon">📁</div>
+                <div class="category-title">Core Suite</div>
+                <div class="category-count">8 Tools</div>
+            </div>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">📊</div>
+                    <div class="tool-badge badge-core">CORE</div>
+                    <div class="tool-name">Project Tracker Pro</div>
+                    <div class="tool-desc">Track projects, budgets, status, and profitability with advanced reporting.</div>
+                    <a class="btn-launch" href="project-tracker-pro.html" target="_blank">Launch →</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">📅</div>
+                    <div class="tool-badge badge-core">CORE</div>
+                    <div class="tool-name">Appointment Scheduler</div>
+                    <div class="tool-desc">Calendar management, route planning, confirmations, and travel optimization.</div>
+                    <a class="btn-launch" href="appointment-scheduler.html" target="_blank">Launch →</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">💼</div>
+                    <div class="tool-badge badge-core">CORE</div>
+                    <div class="tool-name">Invoice & Quote Generator</div>
+                    <div class="tool-desc">Create quotes and invoices, calculate tax, export PDF, track payments.</div>
+                    <a class="btn-launch" href="invoice-generator.html" target="_blank">Launch →</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">🧹</div>
+                    <div class="tool-badge badge-core">CORE</div>
+                    <div class="tool-name">Duplicate Detector Pro</div>
+                    <div class="tool-desc">Detect file, photo, and cloud duplicates. Save space and stay organized.</div>
+                    <a class="btn-launch" href="duplicate-detector-pro.html" target="_blank">Launch →</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">🎨</div>
+                    <div class="tool-badge badge-core">CORE</div>
+                    <div class="tool-name">Branding Customizer</div>
+                    <div class="tool-desc">Manage logos, colors, signatures, and white-label settings for your brand.</div>
+                    <a class="btn-launch" href="branding-customizer.html" target="_blank">Launch →</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">✨</div>
+                    <div class="tool-badge badge-core">CORE</div>
+                    <div class="tool-name">Animation Studio Pro</div>
+                    <div class="tool-desc">Create text/video effects, slideshows with professional animation presets.</div>
+                    <a class="btn-launch" href="animation-studio-pro.html" target="_blank">Launch →</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">✅</div>
+                    <div class="tool-badge badge-core">CORE</div>
+                    <div class="tool-name">Task Manager</div>
+                    <div class="tool-desc">Create tasks, set priorities, manage recurring schedules with team assignments.</div>
+                    <a class="btn-launch" href="task-manager.html" target="_blank">Launch →</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">⚙️</div>
+                    <div class="tool-badge badge-core">CORE</div>
+                    <div class="tool-name">Automation Master</div>
+                    <div class="tool-desc">Control all automations, view activity logs, set schedules and rules.</div>
+                    <a class="btn-launch" href="automation-master.html" target="_blank">Launch →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADD-ON SUITE -->
+        <div class="category-section">
+            <div class="category-header">
+                <div class="category-icon">⭐</div>
+                <div class="category-title">Add-On Suite</div>
+                <div class="category-count">4 Tools</div>
+            </div>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">🌐</div>
+                    <div class="tool-badge badge-addon">ADD-ON</div>
+                    <div class="tool-name">Client Dashboard</div>
+                    <div class="tool-desc">Client-facing portal showing project progress, appointments, and photo gallery.</div>
+                    <a class="btn-launch" href="client-dashboard.html" target="_blank">Launch →</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">👥</div>
+                    <div class="tool-badge badge-addon">ADD-ON</div>
+                    <div class="tool-name">Team Portal</div>
+                    <div class="tool-desc">Crew tracking, task assignments, performance metrics, and location status.</div>
+                    <a class="btn-launch" href="team-portal.html" target="_blank">Launch →</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">📈</div>
+                    <div class="tool-badge badge-addon">ADD-ON</div>
+                    <div class="tool-name">Advanced Analytics</div>
+                    <div class="tool-desc">Revenue trends, profitability analysis, crew KPIs, and expense breakdowns.</div>
+                    <a class="btn-launch" href="advanced-analytics.html" target="_blank">Launch →</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">💰</div>
+                    <div class="tool-badge badge-addon">ADD-ON</div>
+                    <div class="tool-name">Expense & Payroll Manager</div>
+                    <div class="tool-desc">Track expenses, manage payroll, monitor budgets, and generate reports.</div>
+                    <a class="btn-launch" href="expense-payroll-manager.html" target="_blank">Launch →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADVANCED FEATURES -->
+        <div class="category-section">
+            <div class="category-header">
+                <div class="category-icon">⚡</div>
+                <div class="category-title">Advanced Features</div>
+                <div class="category-count">4 Tools</div>
+            </div>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">📍</div>
+                    <div class="tool-badge badge-advanced">ADVANCED</div>
+                    <div class="tool-name">GPS Tracker & Routes</div>
+                    <div class="tool-desc">Real-time crew location tracking, route optimization, geofencing, and travel analytics.</div>
+                    <a class="btn-launch" href="gps-tracker.html" target="_blank">Launch →</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">🎬</div>
+                    <div class="tool-badge badge-advanced">ADVANCED</div>
+                    <div class="tool-name">Media Player Pro</div>
+                    <div class="tool-desc">Professional MP4 player with playlists, speed control, volume, and fullscreen.</div>
+                    <a class="btn-launch" href="media-player.html" target="_blank">Launch →</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">🔗</div>
+                    <div class="tool-badge badge-advanced">ADVANCED</div>
+                    <div class="tool-name">Automation Hub</div>
+                    <div class="tool-desc">Cross-tool integration, event-driven automation, activity logging, and orchestration.</div>
+                    <a class="btn-launch" href="automation-hub.html" target="_blank">Launch →</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">💬</div>
+                    <div class="tool-badge badge-advanced">ADVANCED</div>
+                    <div class="tool-name">Interactive Bots</div>
+                    <div class="tool-desc">Chat with HYDRA, TERRA, and SOL bots. Get assistance and learn the system.</div>
+                    <a class="btn-launch" href="interactive-bots.html" target="_blank">Launch →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ONBOARDING & ENTERTAINMENT -->
+        <div class="category-section">
+            <div class="category-header">
+                <div class="category-icon">🎮</div>
+                <div class="category-title">Onboarding & Entertainment</div>
+                <div class="category-count">2 Tools</div>
+            </div>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">🎭</div>
+                    <div class="tool-badge badge-fun">FUN</div>
+                    <div class="tool-name">Onboarding Gameshow</div>
+                    <div class="tool-desc">Interactive comedy skit with HYDRA, TERRA, SOL + trivia gameshow to learn the system.</div>
+                    <a class="btn-launch" href="onboarding-gameshow.html" target="_blank">Launch →</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">🎥</div>
+                    <div class="tool-badge badge-fun">FUN</div>
+                    <div class="tool-name">Startup Skit Video</div>
+                    <div class="tool-desc">Full professional introduction video explaining HYDRA-TERRA and your bot team.</div>
+                    <a class="btn-launch" href="startup-skit.html" target="_blank">Launch →</a>
+                </div>
+            </div>
+        </div>
+
+        <footer style="text-align: center; padding: 30px; color: #999; border-top: 2px solid #00ccff; margin-top: 50px;">
+            <p style="margin-bottom: 15px;">🌍 EARTH • WATER • BALANCE 💧</p>
+            <p style="margin-bottom: 10px;">Hydra-Terra Landscape Solutions | ABN 19 630 905 514</p>
+            <p style="font-size: 0.9em;">📞 0426 398 510 | 📧 admin@hydra-terra.com.au | 🌐 www.hydra-terra.com.au</p>
+            <p style="margin-top: 20px; font-size: 0.85em; color: #666;">© 2025 All Rights Reserved | Version 2025.1.0</p>
+        </footer>
+    </div>
+</body>
+</html>

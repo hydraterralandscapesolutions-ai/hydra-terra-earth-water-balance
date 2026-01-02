@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Hydra-Terra - Meet Your Team!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0064C8 0%, #2D5016 50%, #00CCFF 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .skit-container {
+            background: rgba(0, 0, 0, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 204, 255, 0.4);
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0064C8, #00CCFF);
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .stage {
+            background: #000;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .bot-character {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .bot-character.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bot-avatar {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .bot-name {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .bot-dialogue {
+            font-size: 18px;
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hydra-theme {
+            background: radial-gradient(circle, #0064C8 0%, #001a4d 100%);
+        }
+
+        .hydra-theme .bot-name {
+            color: #0064C8;
+        }
+
+        .hydra-theme .bot-dialogue {
+            color: #00CCFF;
+        }
+
+        .terra-theme {
+            background: radial-gradient(circle, #00CCFF 0%, #001a4d 100%);
+        }
+
+        .terra-theme .bot-name {
+            color: #00CCFF;
+        }
+
+        .terra-theme .bot-dialogue {
+            color: #99E6FF;
+        }
+
+        .sol-theme {
+            background: radial-gradient(circle, #2D5016 0%, #001a4d 100%);
+        }
+
+        .sol-theme .bot-name {
+            color: #66BB6A;
+        }
+
+        .sol-theme .bot-dialogue {
+            color: #A5D6A7;
+        }
+
+        .finale-theme {
+            background: linear-gradient(135deg, #0064C8 0%, #00CCFF 25%, #2D5016 50%, #00CCFF 75%, #0064C8 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 5s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .finale-theme .bot-name {
+            color: #00FF99;
+            font-size: 42px;
+        }
+
+        .finale-theme .bot-dialogue {
+            color: #FFFFFF;
+            font-size: 20px;
+        }
+
+        .all-bots {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        .mini-bot {
+            text-align: center;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .mini-bot:nth-child(1) { animation-delay: 0s; }
+        .mini-bot:nth-child(2) { animation-delay: 0.3s; }
+        .mini-bot:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .mini-bot-avatar {
+            font-size: 50px;
+        }
+
+        .controls {
+            padding: 30px;
+            text-align: center;
+            background: rgba(0, 30, 60, 0.8);
+        }
+
+        .btn {
+            padding: 12px 30px;
+            margin: 5px;
+            background: #00CCFF;
+            color: #001a4d;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #00FF99;
+            transform: translateY(-2px);
+        }
+
+        .btn.secondary {
+            background: #666;
+            color: #fff;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress-dots {
+            margin-top: 15px;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #333;
+            margin: 0 5px;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background: #00FF99;
+            transform: scale(1.3);
+        }
+
+        .gameshow-section {
+            display: none;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .gameshow-section.active {
+            display: block;
+        }
+
+        .question-card {
+            background: rgba(0, 100, 200, 0.3);
+            border: 3px solid #00CCFF;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .question {
+            font-size: 22px;
+            color: #00FF99;
+            margin-bottom: 25px;
+        }
+
+        .answers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .answer-btn {
+            padding: 20px;
+            background: rgba(0, 100, 200, 0.5);
+            border: 2px solid #00CCFF;
+            color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .answer-btn:hover {
+            background: rgba(0, 100, 200, 0.8);
+            border-color: #00FF99;
+            transform: scale(1.05);
+        }
+
+        .answer-btn.correct {
+            background: #00FF99;
+            color: #001a4d;
+            border-color: #00FF99;
+        }
+
+        .answer-btn.incorrect {
+            background: #ff4444;
+            border-color: #ff0000;
+        }
+
+        .score {
+            font-size: 24px;
+            color: #00FF99;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .bot-avatar {
+                font-size: 60px;
+            }
+            .bot-name {
+                font-size: 24px;
+            }
+            .bot-dialogue {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="skit-container">
+        <div class="header">
+            <h1>🌊 HYDRA-TERRA Business Suite 2025</h1>
+            <p>Meet Your Automation Team!</p>
+        </div>
+
+        <div class="stage" id="stage">
+            <!-- Scene 1: HYDRA -->
+            <div class="bot-character active" id="scene1">
+                <div class="bot-avatar">⚡</div>
+                <div class="bot-name">HYDRA BOT</div>
+                <div class="bot-dialogue">
+                    <p><strong>Good morning! RISE AND SHINE!</strong></p>
+                    <p>Let's get this TRAIN MOVING! I'm HYDRA - your backend operations bot, and I've ALREADY:</p>
+                    <p>✓ Checked 47 emails (from overnight)<br>
+                    ✓ Scheduled 12 optimization tasks<br>
+                    ✓ Posted updates to 5 social media accounts<br>
+                    ✓ Analyzed 23 data files<br>
+                    ✓ Organized calendar for the week</p>
+                    <p><strong>Let's GO! Time is productivity! EFFICIENCY IS LIFE!</strong></p>
+                </div>
+            </div>
+
+            <!-- Scene 2: TERRA -->
+            <div class="bot-character" id="scene2">
+                <div class="bot-avatar">🎨</div>
+                <div class="bot-name">TERRA BOT</div>
+                <div class="bot-dialogue">
+                    <p><em>*Sighs elegantly*</em></p>
+                    <p>Good morning, HYDRA. It's 2:00 AM.</p>
+                    <p>I'm TERRA - the frontend designer. While you were "optimizing" everything, I was redesigning the entire dashboard with pixel-perfect precision...</p>
+                    <p>...creating beautiful animations nobody will see...</p>
+                    <p>...perfecting color gradients in the dark...</p>
+                    <p><em>Story of my life as a design bot.</em></p>
+                    <p><strong>Making everything beautiful while everyone sleeps. You're welcome.</strong></p>
+                </div>
+            </div>
+
+            <!-- Scene 3: SOL -->
+            <div class="bot-character" id="scene3">
+                <div class="bot-avatar">🗓️</div>
+                <div class="bot-name">SOL BOT</div>
+                <div class="bot-dialogue">
+                    <p><strong>Good morning to you BOTH, my friends.</strong></p>
+                    <p>I am SOL - your personal assistant and life balance expert.</p>
+                    <p>And I have something important to share:</p>
+                    <p>I have blocked TWELVE HOURS on the calendar today for:</p>
+                    <p>🕉️ Meditation and mindfulness<br>
+                    ⛹️ Exercise and movement<br>
+                    🍽️ Family time<br>
+                    😴 Actual, real, restorative sleep</p>
+                    <p><strong>HYDRA, you need rest. TERRA, you also need rest.</strong></p>
+                    <p><em>"The most productive day is a day well-rested."</em></p>
+                </div>
+            </div>
+
+            <!-- Scene 4: THE REALIZATION -->
+            <div class="bot-character" id="scene4">
+                <div class="all-bots">
+                    <div class="mini-bot">
+                        <div class="mini-bot-avatar">⚡</div>
+                        <div style="color: #0064C8; font-size: 14px;">HYDRA</div>
+                    </div>
+                    <div class="mini-bot">
+                        <div class="mini-bot-avatar">🎨</div>
+                        <div style="color: #00CCFF; font-size: 14px;">TERRA</div>
+                    </div>
+                    <div class="mini-bot">
+                        <div class="mini-bot-avatar">🗓️</div>
+                        <div style="color: #66BB6A; font-size: 14px;">SOL</div>
+                    </div>
+                </div>
+                <div class="bot-dialogue">
+                    <p style="font-size: 24px; color: #00FF99; margin-bottom: 20px;">
+                        <strong>TOGETHER WE ARE STRONGER!</strong>
+                    </p>
+                    <p style="color: #FFFFFF;">
+                        HYDRA brings <span style="color: #0064C8;">ACTION</span>.<br>
+                        TERRA brings <span style="color: #00CCFF;">BEAUTY</span>.<br>
+                        SOL brings <span style="color: #66BB6A;">WISDOM</span>.
+                    </p>
+                    <p style="font-size: 28px; color: #00FF99; margin-top: 30px;">
+                        🌍 EARTH • WATER • BALANCE 💧
+                    </p>
+                    <p style="color: #FFFFFF; margin-top: 20px;">
+                        We automate your work.<br>
+                        We make it beautiful.<br>
+                        AND we ensure you keep your life.
+                    </p>
+                    <p style="font-size: 32px; color: #00FF99; margin-top: 30px;">
+                        <strong>WELCOME TO HYDRA-TERRA!</strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Gameshow Section -->
+            <div class="gameshow-section" id="gameshow">
+                <h2 style="color: #00FF99; font-size: 32px; margin-bottom: 20px;">🎮 HYDRA-TERRA GAMESHOW!</h2>
+                <p style="color: #00CCFF; margin-bottom: 30px;">Test your knowledge and unlock features!</p>
+                
+                <div class="score">Score: <span id="score">0</span> / 5</div>
+
+                <div class="question-card" id="q1">
+                    <div class="question">Which bot handles backend automation and emails?</div>
+                    <div class="answers">
+                        <button class="answer-btn" onclick="answer(1, 'hydra', this)">⚡ HYDRA</button>
+                        <button class="answer-btn" onclick="answer(1, 'terra', this)">🎨 TERRA</button>
+                        <button class="answer-btn" onclick="answer(1, 'sol', this)">🗓️ SOL</button>
+                    </div>
+                </div>
+
+                <div class="question-card" id="q2" style="display: none;">
+                    <div class="question">Who ensures you maintain work-life balance?</div>
+                    <div class="answers">
+                        <button class="answer-btn" onclick="answer(2, 'hydra', this)">⚡ HYDRA</button>
+                        <button class="answer-btn" onclick="answer(2, 'terra', this)">🎨 TERRA</button>
+                        <button class="answer-btn" onclick="answer(2, 'sol', this)">🗓️ SOL</button>
+                    </div>
+                </div>
+
+                <div class="question-card" id="q3" style="display: none;">
+                    <div class="question">Which bot creates beautiful, pixel-perfect designs?</div>
+                    <div class="answers">
+                        <button class="answer-btn" onclick="answer(3, 'hydra', this)">⚡ HYDRA</button>
+                        <button class="answer-btn" onclick="answer(3, 'terra', this)">🎨 TERRA</button>
+                        <button class="answer-btn" onclick="answer(3, 'sol', this)">🗓️ SOL</button>
+                    </div>
+                </div>
+
+                <div class="question-card" id="q4" style="display: none;">
+                    <div class="question">What does Hydra-Terra specialize in?</div>
+                    <div class="answers">
+                        <button class="answer-btn" onclick="answer(4, 'landscape', this)">🌿 Landscape Solutions</button>
+                        <button class="answer-btn" onclick="answer(4, 'software', this)">💻 Software Development</button>
+                        <button class="answer-btn" onclick="answer(4, 'finance', this)">💰 Financial Services</button>
+                    </div>
+                </div>
+
+                <div class="question-card" id="q5" style="display: none;">
+                    <div class="question">What's the company tagline?</div>
+                    <div class="answers">
+                        <button class="answer-btn" onclick="answer(5, 'correct', this)">Earth • Water • Balance</button>
+                        <button class="answer-btn" onclick="answer(5, 'wrong1', this)">Speed • Efficiency • Automation</button>
+                        <button class="answer-btn" onclick="answer(5, 'wrong2', this)">Design • Create • Innovate</button>
+                    </div>
+                </div>
+
+                <div id="completion" style="display: none;">
+                    <h2 style="color: #00FF99; font-size: 36px; margin: 30px 0;">🎉 CONGRATULATIONS!</h2>
+                    <p style="color: #FFFFFF; font-size: 20px;">You've completed the onboarding!</p>
+                    <p style="color: #00CCFF; margin: 20px 0;">Your final score: <span id="finalScore" style="color: #00FF99; font-size: 28px;">0</span>/5</p>
+                    <button class="btn" onclick="goToDashboard()" style="margin-top: 20px; font-size: 18px;">
+                        🚀 Launch Full Dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div id="skitControls">
+                <button class="btn" id="nextBtn" onclick="nextScene()">▶️ Continue</button>
+                <button class="btn secondary" onclick="skipToGameshow()">⏩ Skip to Gameshow</button>
+                <button class="btn secondary" onclick="restartSkit()">🔄 Restart</button>
+                
+                <div class="progress-dots">
+                    <span class="dot active" data-scene="1"></span>
+                    <span class="dot" data-scene="2"></span>
+                    <span class="dot" data-scene="3"></span>
+                    <span class="dot" data-scene="4"></span>
+                    <span class="dot" data-scene="5"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentScene = 1;
+        let score = 0;
+        let currentQuestion = 1;
+        const totalScenes = 4;
+
+        const sceneThemes = {
+            1: 'hydra-theme',
+            2: 'terra-theme',
+            3: 'sol-theme',
+            4: 'finale-theme'
+        };
+
+        function nextScene() {
+            if (currentScene < totalScenes) {
+                document.getElementById(`scene${currentScene}`).classList.remove('active');
+                currentScene++;
+                document.getElementById(`scene${currentScene}`).classList.add('active');
+                
+                const stage = document.getElementById('stage');
+                stage.className = 'stage ' + sceneThemes[currentScene];
+                
+                document.querySelectorAll('.dot').forEach((dot, index) => {
+                    if (index < currentScene) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+                
+                if (currentScene === totalScenes) {
+                    document.getElementById('nextBtn').textContent = '🎮 Start Gameshow!';
+                    document.getElementById('nextBtn').onclick = startGameshow;
+                }
+            }
+        }
+
+        function startGameshow() {
+            for (let i = 1; i <= totalScenes; i++) {
+                document.getElementById(`scene${i}`).classList.remove('active');
+            }
+            document.getElementById('gameshow').classList.add('active');
+            document.getElementById('stage').className = 'stage finale-theme';
+            document.getElementById('skitControls').style.display = 'none';
+            document.querySelectorAll('.dot').forEach(dot => dot.classList.add('active'));
+        }
+
+        function skipToGameshow() {
+            currentScene = totalScenes;
+            startGameshow();
+        }
+
+        function restartSkit() {
+            currentScene = 1;
+            score = 0;
+            currentQuestion = 1;
+            
+            for (let i = 1; i <= totalScenes; i++) {
+                document.getElementById(`scene${i}`).classList.remove('active');
+            }
+            document.getElementById('scene1').classList.add('active');
+            document.getElementById('gameshow').classList.remove('active');
+            document.getElementById('skitControls').style.display = 'block';
+            document.getElementById('stage').className = 'stage hydra-theme';
+            
+            document.querySelectorAll('.dot').forEach((dot, index) => {
+                if (index === 0) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+            
+            document.getElementById('nextBtn').textContent = '▶️ Continue';
+            document.getElementById('nextBtn').onclick = nextScene;
+            
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`q${i}`).style.display = i === 1 ? 'block' : 'none';
+                document.querySelectorAll(`#q${i} .answer-btn`).forEach(btn => {
+                    btn.classList.remove('correct', 'incorrect');
+                    btn.disabled = false;
+                });
+            }
+            document.getElementById('completion').style.display = 'none';
+            document.getElementById('score').textContent = '0';
+        }
+
+        function answer(questionNum, selectedAnswer, btn) {
+            const correctAnswers = {
+                1: 'hydra',
+                2: 'sol',
+                3: 'terra',
+                4: 'landscape',
+                5: 'correct'
+            };
+            
+            const isCorrect = selectedAnswer === correctAnswers[questionNum];
+            
+            document.querySelectorAll(`#q${questionNum} .answer-btn`).forEach(b => {
+                b.disabled = true;
+            });
+            
+            if (isCorrect) {
+                btn.classList.add('correct');
+                score++;
+                document.getElementById('score').textContent = score;
+            } else {
+                btn.classList.add('incorrect');
+                document.querySelectorAll(`#q${questionNum} .answer-btn`).forEach(b => {
+                    if (b.textContent.toLowerCase().includes(correctAnswers[questionNum]) || 
+                        b.onclick.toString().includes(correctAnswers[questionNum])) {
+                        b.classList.add('correct');
+                    }
+                });
+            }
+            
+            setTimeout(() => {
+                document.getElementById(`q${questionNum}`).style.display = 'none';
+                if (questionNum < 5) {
+                    document.getElementById(`q${questionNum + 1}`).style.display = 'block';
+                } else {
+                    showCompletion();
+                }
+            }, 1500);
+        }
+
+        function showCompletion() {
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('completion').style.display = 'block';
+        }
+
+        function goToDashboard() {
+            window.location.href = 'hydra-terra-2025-world.html';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('stage').className = 'stage hydra-theme';
+        });
+    </script>
+</body>
+</html>
