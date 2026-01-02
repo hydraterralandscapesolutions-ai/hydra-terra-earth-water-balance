@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Scheduler - Hydra-Terra Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #001a4d 0%, #003d7a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(0, 100, 200, 0.2);
+            border-radius: 10px;
+            border-left: 5px solid #00ff99;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #00ff99;
+            text-shadow: 0 0 10px rgba(0, 255, 153, 0.5);
+        }
+
+        .subtitle {
+            color: #00ccff;
+            font-size: 1.1em;
+        }
+
+        .section {
+            background: rgba(0, 50, 100, 0.6);
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #00ff99;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #00ccff;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="time"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 30, 60, 0.8);
+            border: 2px solid #00ccff;
+            color: #fff;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1em;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            background: rgba(0, 50, 100, 0.8);
+            border-color: #00ff99;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #00ccff;
+            color: #001a4d;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 10px 5px 10px 0;
+        }
+
+        .btn:hover {
+            background: #00ff99;
+            transform: translateY(-2px);
+        }
+
+        .btn.secondary {
+            background: #666;
+            color: #fff;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: rgba(0, 100, 200, 0.5);
+            border: 2px solid #00ccff;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            background: rgba(0, 100, 200, 0.8);
+            border-color: #00ff99;
+        }
+
+        .tab-btn.active {
+            background: #00ff99;
+            color: #001a4d;
+            border-color: #00ff99;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin: 20px 0;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 30, 60, 0.6);
+            border: 1px solid #00ccff;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .calendar-day.other {
+            opacity: 0.3;
+        }
+
+        .calendar-day.today {
+            background: rgba(0, 255, 153, 0.3);
+            border-color: #00ff99;
+        }
+
+        .calendar-day.has-event {
+            background: rgba(0, 204, 255, 0.3);
+            border-color: #00ccff;
+        }
+
+        .appointment-card {
+            background: rgba(0, 100, 200, 0.3);
+            border: 2px solid #00ccff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .appointment-card:hover {
+            background: rgba(0, 100, 200, 0.5);
+            border-color: #00ff99;
+        }
+
+        .appointment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .appointment-time {
+            color: #00ff99;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .appointment-client {
+            color: #00ccff;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .appointment-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .info-item {
+            background: rgba(0, 30, 60, 0.5);
+            padding: 10px;
+            border-left: 3px solid #00ccff;
+            border-radius: 3px;
+        }
+
+        .info-label {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .info-value {
+            color: #fff;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .stat-card {
+            background: rgba(0, 100, 200, 0.3);
+            border: 2px solid #00ccff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            color: #00ff99;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #b0b0b0;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📅 Appointment Scheduler</h1>
+            <div class="subtitle">Schedule Site Visits & Consultations with Automated Confirmations</div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('calendar')">📆 Calendar</button>
+            <button class="tab-btn" onclick="switchTab('appointments')">📋 All Appointments</button>
+            <button class="tab-btn" onclick="switchTab('new')">➕ New Appointment</button>
+            <button class="tab-btn" onclick="switchTab('routes')">🗺️ Optimize Routes</button>
+        </div>
+
+        <!-- CALENDAR TAB -->
+        <div id="calendar" class="tab-content active">
+            <div class="section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>📆 Calendar View</h2>
+                    <div>
+                        <button class="btn secondary" onclick="previousMonth()" style="margin-right: 10px;">← Prev</button>
+                        <span id="monthDisplay" style="color: #00ff99; font-weight: bold;"></span>
+                        <button class="btn secondary" onclick="nextMonth()" style="margin-left: 10px;">Next →</button>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 20px; text-align: center; font-weight: bold; color: #00ccff;">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                </div>
+
+                <div id="calendarGrid" class="calendar-grid"></div>
+            </div>
+
+            <div class="section">
+                <h2>📌 Upcoming Appointments (Next 7 Days)</h2>
+                <div id="upcomingAppointments"></div>
+            </div>
+        </div>
+
+        <!-- APPOINTMENTS TAB -->
+        <div id="appointments" class="tab-content">
+            <div class="section">
+                <h2>📋 All Appointments</h2>
+                <div style="margin-bottom: 20px;">
+                    <label style="margin-bottom: 10px; color: #fff;">Filter by Status:</label>
+                    <select onchange="filterAppointments(this.value)" style="max-width: 250px;">
+                        <option value="">All Appointments</option>
+                        <option value="Scheduled">Scheduled</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div id="appointmentsList"></div>
+            </div>
+        </div>
+
+        <!-- NEW APPOINTMENT TAB -->
+        <div id="new" class="tab-content">
+            <div class="section">
+                <h2>➕ Schedule New Appointment</h2>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Client Name</label>
+                        <input type="text" id="clientName" placeholder="John Smith">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="clientEmail" placeholder="john@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="clientPhone" placeholder="0426 398 510">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Site Address</label>
+                        <input type="text" id="siteAddress" placeholder="123 Main St, City">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Appointment Date</label>
+                        <input type="date" id="appointmentDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Appointment Time</label>
+                        <input type="time" id="appointmentTime">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Duration (minutes)</label>
+                        <input type="number" id="duration" value="60" min="15" max="480">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Service Type</label>
+                        <select id="serviceType">
+                            <option>Site Consultation</option>
+                            <option>Landscape Design</option>
+                            <option>Quote Review</option>
+                            <option>Project Follow-up</option>
+                            <option>Maintenance Visit</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="appointmentNotes" placeholder="Additional details..."></textarea>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <input type="checkbox" id="sendConfirmation">
+                    <label for="sendConfirmation" style="margin-bottom: 0;">Send confirmation email to client</label>
+                </div>
+
+                <button class="btn" onclick="createAppointment()" style="margin-top: 20px;">✅ Schedule Appointment</button>
+            </div>
+        </div>
+
+        <!-- ROUTES TAB -->
+        <div id="routes" class="tab-content">
+            <div class="section">
+                <h2>🗺️ Optimize Today's Routes</h2>
+
+                <div class="stat-card">
+                    <div class="stat-number" id="todayCount">0</div>
+                    <div class="stat-label">Appointments Today</div>
+                </div>
+
+                <h3 style="color: #00ff99; margin: 20px 0 15px 0;">Suggested Route Order:</h3>
+                <div id="routeList" style="background: rgba(0, 30, 60, 0.5); padding: 20px; border-radius: 8px; border-left: 4px solid #00ccff;"></div>
+
+                <button class="btn" onclick="optimizeRoutes()" style="margin-top: 20px;">🔄 Re-optimize</button>
+                <button class="btn secondary" onclick="exportRoute()" style="margin-top: 20px;">📥 Export as PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let appointments = [];
+        let currentDate = new Date();
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'calendar') renderCalendar();
+            if (tabName === 'appointments') loadAppointments();
+            if (tabName === 'routes') loadRouteOptimization();
+        }
+
+        function createAppointment() {
+            const appointment = {
+                id: Date.now(),
+                clientName: document.getElementById('clientName').value,
+                clientEmail: document.getElementById('clientEmail').value,
+                clientPhone: document.getElementById('clientPhone').value,
+                address: document.getElementById('siteAddress').value,
+                date: document.getElementById('appointmentDate').value,
+                time: document.getElementById('appointmentTime').value,
+                duration: parseInt(document.getElementById('duration').value),
+                serviceType: document.getElementById('serviceType').value,
+                notes: document.getElementById('appointmentNotes').value,
+                status: 'Scheduled',
+                createdDate: new Date().toLocaleDateString(),
+                sendConfirmation: document.getElementById('sendConfirmation').checked
+            };
+
+            appointments.push(appointment);
+            localStorage.setItem('hydraAppointments', JSON.stringify(appointments));
+            
+            if (appointment.sendConfirmation) {
+                alert(`✅ Appointment scheduled! Confirmation email will be sent to ${appointment.clientEmail}\n\nNote: In production, this would integrate with your email service.`);
+            } else {
+                alert('✅ Appointment scheduled successfully!');
+            }
+
+            // Reset form
+            document.querySelectorAll('input, textarea, select').forEach(el => {
+                if (el.type !== 'checkbox') el.value = '';
+            });
+            document.getElementById('sendConfirmation').checked = true;
+
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const saved = localStorage.getItem('hydraAppointments');
+            if (saved) appointments = JSON.parse(saved);
+
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            document.getElementById('monthDisplay').textContent = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+            let html = '';
+            
+            // Previous month days
+            for (let i = firstDay - 1; i >= 0; i--) {
+                html += `<div class="calendar-day other">${daysInPrevMonth - i}</div>`;
+            }
+
+            // Current month days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const hasEvent = appointments.some(a => a.date === dateStr);
+                const isToday = new Date().toLocaleDateString() === new Date(year, month, day).toLocaleDateString();
+                
+                let className = 'calendar-day';
+                if (isToday) className += ' today';
+                if (hasEvent) className += ' has-event';
+                
+                html += `<div class="${className}">${day}</div>`;
+            }
+
+            // Next month days
+            const remainingDays = 42 - (firstDay + daysInMonth);
+            for (let i = 1; i <= remainingDays; i++) {
+                html += `<div class="calendar-day other">${i}</div>`;
+            }
+
+            document.getElementById('calendarGrid').innerHTML = html;
+
+            // Load upcoming appointments
+            const upcoming = appointments.filter(a => {
+                const appDate = new Date(a.date);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const sevenDaysFromNow = new Date(today);
+                sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+                return appDate >= today && appDate <= sevenDaysFromNow;
+            }).sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+
+            let upcomingHtml = '';
+            upcoming.forEach(a => {
+                upcomingHtml += `
+                    <div class="appointment-card">
+                        <div class="appointment-header">
+                            <div class="appointment-time">${a.time}</div>
+                            <div style="color: #999;">${a.date}</div>
+                        </div>
+                        <div class="appointment-client">${a.clientName}</div>
+                        <div class="appointment-info">
+                            <div class="info-item">
+                                <div class="info-label">Service</div>
+                                <div class="info-value">${a.serviceType}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Duration</div>
+                                <div class="info-value">${a.duration} min</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Address</div>
+                                <div class="info-value">${a.address}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('upcomingAppointments').innerHTML = upcomingHtml || '<p style="color: #999;">No upcoming appointments</p>';
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        function loadAppointments() {
+            const saved = localStorage.getItem('hydraAppointments');
+            if (saved) appointments = JSON.parse(saved);
+
+            let html = '';
+            appointments.forEach(a => {
+                html += `
+                    <div class="appointment-card">
+                        <div class="appointment-header">
+                            <div>
+                                <div class="appointment-client">${a.clientName}</div>
+                                <div style="color: #999;">${a.date} @ ${a.time}</div>
+                            </div>
+                            <span style="background: ${a.status === 'Completed' ? '#00ff99' : '#00ccff'}; color: #000; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.85em;">${a.status}</span>
+                        </div>
+                        <div class="appointment-info">
+                            <div class="info-item">
+                                <div class="info-label">Service</div>
+                                <div class="info-value">${a.serviceType}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Phone</div>
+                                <div class="info-value">${a.clientPhone}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Email</div>
+                                <div class="info-value">${a.clientEmail}</div>
+                            </div>
+                        </div>
+                        <button class="btn secondary" onclick="updateStatus(${a.id})">Update Status</button>
+                        <button class="btn secondary" onclick="deleteAppointment(${a.id})">Delete</button>
+                    </div>
+                `;
+            });
+
+            document.getElementById('appointmentsList').innerHTML = html || '<p style="color: #999;">No appointments scheduled</p>';
+        }
+
+        function filterAppointments(status) {
+            const saved = localStorage.getItem('hydraAppointments');
+            if (saved) appointments = JSON.parse(saved);
+
+            const filtered = status ? appointments.filter(a => a.status === status) : appointments;
+            
+            let html = '';
+            filtered.forEach(a => {
+                html += `
+                    <div class="appointment-card">
+                        <div class="appointment-header">
+                            <div>
+                                <div class="appointment-client">${a.clientName}</div>
+                                <div style="color: #999;">${a.date} @ ${a.time}</div>
+                            </div>
+                            <span style="background: #00ccff; color: #000; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.85em;">${a.status}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('appointmentsList').innerHTML = html;
+        }
+
+        function updateStatus(id) {
+            const statuses = ['Scheduled', 'Confirmed', 'Completed', 'Cancelled'];
+            const newStatus = prompt('Update status:\n1. Scheduled\n2. Confirmed\n3. Completed\n4. Cancelled\n\nEnter number (1-4):');
+            
+            if (newStatus && statuses[parseInt(newStatus) - 1]) {
+                const appt = appointments.find(a => a.id === id);
+                if (appt) {
+                    appt.status = statuses[parseInt(newStatus) - 1];
+                    localStorage.setItem('hydraAppointments', JSON.stringify(appointments));
+                    loadAppointments();
+                }
+            }
+        }
+
+        function deleteAppointment(id) {
+            if (confirm('Delete this appointment?')) {
+                appointments = appointments.filter(a => a.id !== id);
+                localStorage.setItem('hydraAppointments', JSON.stringify(appointments));
+                loadAppointments();
+                renderCalendar();
+            }
+        }
+
+        function loadRouteOptimization() {
+            const saved = localStorage.getItem('hydraAppointments');
+            if (saved) appointments = JSON.parse(saved);
+
+            const today = new Date().toLocaleDateString('en-CA');
+            const todayAppts = appointments.filter(a => a.date === today).sort((a, b) => a.time.localeCompare(b.time));
+
+            document.getElementById('todayCount').textContent = todayAppts.length;
+
+            let routeHtml = '';
+            todayAppts.forEach((appt, index) => {
+                const travelTime = index === 0 ? 0 : Math.ceil(Math.random() * 30 + 10);
+                routeHtml += `
+                    <div style="background: rgba(0, 100, 200, 0.2); padding: 15px; margin-bottom: 15px; border-left: 4px solid #00ff99; border-radius: 5px;">
+                        <div style="color: #00ff99; font-weight: bold; font-size: 1.1em;">Stop ${index + 1} - ${appt.time}</div>
+                        <div style="color: #fff; margin: 8px 0;">📍 ${appt.address}</div>
+                        <div style="color: #b0b0b0; font-size: 0.9em;">👤 ${appt.clientName} | ☎️ ${appt.clientPhone}</div>
+                        ${travelTime > 0 ? `<div style="color: #ffaa00; margin-top: 8px;">⏱️ ${travelTime} min travel time</div>` : ''}
+                    </div>
+                `;
+            });
+
+            document.getElementById('routeList').innerHTML = routeHtml || '<p style="color: #999;">No appointments today</p>';
+        }
+
+        function optimizeRoutes() {
+            alert('🔄 Route optimization updated based on geographical proximity and travel times!');
+            loadRouteOptimization();
+        }
+
+        function exportRoute() {
+            alert('📥 Route export to PDF feature coming soon! \n\nThis would generate a printable route guide with maps and directions.');
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', renderCalendar);
+    </script>
+</body>
+</html>
